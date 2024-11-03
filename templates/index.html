@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+    <title>웹채팅 인터페이스</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html, body {
+            height: 100%; /* 전체 화면 높이 */
+            font-family: Arial, sans-serif;
+        }
+        header {
+            padding: 20px;
+            text-align: center;
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #ccc; /* 선 추가 */
+        }
+        .container {
+            display: flex;
+            height: calc(100% - 72px); /* 전체 화면 높이에서 헤더 높이 제외 */
+        }
+        #sidebar {
+            width: 300px;
+            background-color: antiquewhite;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        #content {
+            flex: 1;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            background-color: white;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+
+        #message-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        #send-button {
+            margin-left: 10px;
+            padding: 10px 20px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>웹채팅 테스트 페이지</h1>
+        <hr> <!-- 선 추가 -->
+    </header>
+    <div class="container">
+        <div id="sidebar">
+            <form action="#" style="margin-bottom: 20px;">
+                <input type="text" id="select_room" placeholder="방 이름 입력" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                <button id="goRoom" type="button" style="width: 100%; padding: 10px; margin-bottom: 10px; border: none; background-color: #28a745; color: white; border-radius: 4px; cursor: pointer;">방 입장</button>
+                <button id="leaveRoom" type="button" style="width: 100%; padding: 10px; border: none; background-color: #dc3545; color: white; border-radius: 4px; cursor: pointer;">방 나가기</button>
+            </form>
+        </div>
+        <div id="content">
+            <div id="messages"></div>
+            <div id="input-area">
+                <form action="#" style="margin-bottom: 20px; display: flex;" >
+                    <input type="text" id="message-input" placeholder="메시지를 입력하세요">
+                    <button id="send-button">전송</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
+        var socket = io();
+        let roomNumber;
+
+        document.getElementById("goRoom").addEventListener("click",() =>{
+            roomNumber = document.getElementById('select_room').value
+            socket.emit('join_event',{number: roomNumber});
+        })
+
+
+        document.getElementById("send-button").addEventListener("click",() =>{
+            let messageInput = document.getElementById('message-input')
+            socket.emit('send_message_event',{
+                number: roomNumber, 
+                nicename: "TestName", 
+                message : messageInput.value });
+            let newMessage = document.createElement("div");
+            let MessageParent = document.getElementById("messages");
+            newMessage.textContent = messageInput.value;
+            MessageParent.appendChild(newMessage);
+
+            messageInput.value ="";
+        })
+
+
+        socket.on('send_message_event',(data) => {
+            let newMessage = document.createElement("div");
+            let MessageParent = document.getElementById("messages");
+            // newMessage.classList.add("message"); css 추가용
+            newMessage.textContent = `${data.nickname}: ${data.message}`;
+            MessageParent.appendChild(newMessage);
+        })
+
+
+    </script>
+</body>
+</html>
