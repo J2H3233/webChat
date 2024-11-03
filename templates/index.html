@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+        integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+        crossorigin="anonymous"></script>
     <title>웹채팅 인터페이스</title>
     <style>
         * {
@@ -11,28 +14,37 @@
             margin: 0;
             padding: 0;
         }
-        html, body {
-            height: 100%; /* 전체 화면 높이 */
+
+        html,
+        body {
+            height: 100%;
+            /* 전체 화면 높이 */
             font-family: Arial, sans-serif;
         }
+
         header {
             padding: 20px;
             text-align: center;
             background-color: #f8f9fa;
-            border-bottom: 2px solid #ccc; /* 선 추가 */
+            border-bottom: 2px solid #ccc;
+            /* 선 추가 */
         }
+
         .container {
             display: flex;
-            height: calc(100% - 72px); /* 전체 화면 높이에서 헤더 높이 제외 */
+            flex-wrap: nowrap;
+            /* 요소들이 한 줄에 유지되도록 설정 */
+            height: calc(100% - 72px);
         }
+
         #sidebar {
             width: 300px;
             background-color: antiquewhite;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            flex-shrink: 0;
+            /* 사이드바가 줄어들지 않도록 설정 */
         }
+        
         #content {
             flex: 1;
             background-color: #f0f0f0;
@@ -40,6 +52,7 @@
             flex-direction: column;
             padding: 20px;
         }
+
         #messages {
             flex: 1;
             overflow-y: auto;
@@ -48,6 +61,7 @@
             padding: 10px;
             border: 1px solid #ccc;
         }
+
         .message {
             margin-bottom: 10px;
             padding: 5px;
@@ -60,7 +74,8 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
-        #send-button {
+
+        #send_button {
             margin-left: 10px;
             padding: 10px 20px;
             border: none;
@@ -71,25 +86,46 @@
         }
     </style>
 </head>
+
 <body>
     <header>
         <h1>웹채팅 테스트 페이지</h1>
-        <hr> <!-- 선 추가 -->
+        <hr> 
     </header>
     <div class="container">
-        <div id="sidebar">
-            <form action="#" style="margin-bottom: 20px;">
-                <input type="text" id="select_room" placeholder="방 이름 입력" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
-                <button id="goRoom" type="button" style="width: 100%; padding: 10px; margin-bottom: 10px; border: none; background-color: #28a745; color: white; border-radius: 4px; cursor: pointer;">방 입장</button>
-                <button id="leaveRoom" type="button" style="width: 100%; padding: 10px; border: none; background-color: #dc3545; color: white; border-radius: 4px; cursor: pointer;">방 나가기</button>
+        <div id="sidebar"> 
+            <div style="margin-bottom: 10px;">
+                <h3 id ="nicknameDisplay">nickname :</h3>
+                <h3 id="RoomNumberDisplay">RoomNumber : </h3>
+            </div>
+            <hr>
+            <form action="#" style="margin-bottom: 10px;margin-top: 10px;">
+                <input type="text" id="setName" placeholder="닉네임 입력"
+                    style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                <button id="setName_button" type="button"
+                    style="width: 100%; padding: 10px; margin-bottom: 10px; border: none; background-color: blue; color: white; border-radius: 4px; cursor: pointer;">닉네임
+                    설정</button>
             </form>
+            <hr>
+            <form action="#" style="margin-bottom: 20px;margin-top: 10px;">
+                <input type="text" id="select_room" placeholder="방 이름 입력"
+                    style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                <button id="goRoom" type="button"
+                    style="width: 100%; padding: 10px; margin-bottom: 10px; border: none; background-color: #28a745; color: white; border-radius: 4px; cursor: pointer;">방
+                    입장</button>
+                <button id="leaveRoom" type="button"
+                    style="width: 100%; padding: 10px; border: none; background-color: #dc3545; color: white; border-radius: 4px; cursor: pointer;">방
+                    나가기</button>
+            </form>
+
+
         </div>
         <div id="content">
             <div id="messages"></div>
             <div id="input-area">
-                <form action="#" style="margin-bottom: 20px; display: flex;" >
+                <form action="#" style="margin-bottom: 20px; display: flex;">
                     <input type="text" id="message-input" placeholder="메시지를 입력하세요">
-                    <button id="send-button">전송</button>
+                    <button id="send_button">전송</button>
                 </form>
 
             </div>
@@ -97,32 +133,43 @@
     </div>
 
     <script>
-        
+
         var socket = io();
-        let roomNumber;
+        let roomNumber = null;
+        let nickname= null;
 
-        document.getElementById("goRoom").addEventListener("click",() =>{
+        document.getElementById("goRoom").addEventListener("click", () => {
             roomNumber = document.getElementById('select_room').value
-            socket.emit('join_event',{number: roomNumber});
+            document.getElementById('RoomNumberDisplay').textContent = "RoomNumber : " + roomNumber;
+            socket.emit('join_event', { number: roomNumber });
+
+            
         })
 
+        document.getElementById("setName_button").addEventListener("click", () => {
+            nickname = document.getElementById('setName').value;
+            document.getElementById('nicknameDisplay').textContent = "nickname : " + nickname;
+            nickname.textContent="";
+        })
 
-        document.getElementById("send-button").addEventListener("click",() =>{
+        document.getElementById("send_button").addEventListener("click", () => {
+            event.preventDefault(); 
             let messageInput = document.getElementById('message-input')
-            socket.emit('send_message_event',{
-                number: roomNumber, 
-                nicename: "TestName", 
-                message : messageInput.value });
-            let newMessage = document.createElement("div");
-            let MessageParent = document.getElementById("messages");
-            newMessage.textContent = messageInput.value;
-            MessageParent.appendChild(newMessage);
-
-            messageInput.value ="";
+            socket.emit('send_message_event', {
+                number: roomNumber,
+                nickname: nickname,
+                message: messageInput.value
+            });
+            
+            messageInput.value = "";
+        })
+        document.getElementById("setName_button").addEventListener("click", () => {
+            nickname = document.getElementById('setName').value;
+            document.getElementById('nicknameDisplay').textContent = "nickname : " + nickname;
+            document.getElementById('setName').value="";
         })
 
-
-        socket.on('send_message_event',(data) => {
+        socket.on('send_message_event', (data) => {
             let newMessage = document.createElement("div");
             let MessageParent = document.getElementById("messages");
             // newMessage.classList.add("message"); css 추가용
@@ -133,4 +180,5 @@
 
     </script>
 </body>
+
 </html>
