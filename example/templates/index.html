@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Flask-SocketIO 테스트 (Vanilla JS)</title>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf-8">
+        document.addEventListener("DOMContentLoaded", function() {
+            // Socket.IO 서버에 연결합니다.
+            var socket = io();
+
+            // 새로운 연결에 대한 이벤트 핸들러.
+            socket.on('connect', function() {
+                socket.emit('my_event', {data: '연결되었습니다!'});
+            });
+
+            // 서버에서 보낸 데이터를 처리하는 이벤트 핸들러.
+            socket.on('my_response', function(msg, cb) {
+                var log = document.getElementById('log');
+                var newDiv = document.createElement('div');
+                newDiv.textContent = '수신 #' + msg.count + ': ' + msg.data;
+                log.appendChild(document.createElement('br'));
+                log.appendChild(newDiv);
+                if (cb) cb();
+            });
+
+            // 메시지 지연 시간을 측정하기 위해 "ping" 메시지를 보내는 간격 함수.
+            var ping_pong_times = [];
+            var start_time;
+            setInterval(function() {
+                start_time = (new Date).getTime();
+                document.getElementById('transport').textContent = socket.io.engine.transport.name;
+                socket.emit('my_ping');
+            }, 1000);
+
+            // "pong" 메시지의 핸들러.
+            socket.on('my_pong', function() {
+                var latency = (new Date).getTime() - start_time;
+                ping_pong_times.push(latency);
+                ping_pong_times = ping_pong_times.slice(-30); // 최근 30개의 샘플만 유지
+                var sum = ping_pong_times.reduce((a, b) => a + b, 0);
+                document.getElementById('ping-pong').textContent = Math.round(10 * sum / ping_pong_times.length) / 10;
+            });
+
+            // 여러 양식에 대한 핸들러.
+            document.getElementById('emit').addEventListener('submit', function(event) {
+                event.preventDefault();
+                socket.emit('my_event_foo', {data: document.getElementById('emit_data').value});
+            });
+
+            document.getElementById('broadcast').addEventListener('submit', function(event) {
+                event.preventDefault();
+                socket.emit('my_broadcast_event', {data: document.getElementById('broadcast_data').value});
+            });
+
+            document.getElementById('join').addEventListener('submit', function(event) {
+                event.preventDefault();
+                socket.emit('join', {room: document.getElementById('join_room').value});
+            });
+
+            document.getElementById('leave').addEventListener('submit', function(event) {
+                event.preventDefault();
+                socket.emit('leave', {room: document.getElementById('leave_room').value});
+            });
+
+            document.getElementById('send_room').addEventListener('submit', function(event) {
+                event.preventDefault();
+                socket.emit('my_room_event', {
+                    room: document.getElementById('room_name').value,
+                    data: document.getElementById('room_data').value
+                });
+            });
+
+            document.getElementById('close').addEventListener('submit', function(event) {
+                event.preventDefault();
+                socket.emit('close_room', {room: document.getElementById('close_room').value});
+            });
+
+            document.getElementById('disconnect').addEventListener('submit', function(event) {
+                event.preventDefault();
+                socket.emit('disconnect_request');
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Flask-SocketIO 테스트 (Vanilla JS)</h1>
+    <p>
+      비동기 모드는: <b>{{ async_mode }}</b><br>
+      현재 전송 방식은: <b><span id="transport"></span></b><br>
+      평균 핑/퐁 지연 시간: <b><span id="ping-pong"></span>ms</b>
+    </p>
+    <h2>보내기:</h2>
+    <form id="emit" method="POST" action='#'>
+        <input type="text" name="emit_data" id="emit_data" placeholder="메시지">
+        <input type="submit" value="에코">
+    </form>
+    <form id="broadcast" method="POST" action='#'>
+        <input type="text" name="broadcast_data" id="broadcast_data" placeholder="메시지">
+        <input type="submit" value="브로드캐스트">
+    </form>
+    <form id="join" method="POST" action='#'>
+        <input type="text" name="join_room" id="join_room" placeholder="방 이름">
+        <input type="submit" value="방 참여">
+    </form>
+    <form id="leave" method="POST" action='#'>
+        <input type="text" name="leave_room" id="leave_room" placeholder="방 이름">
+        <input type="submit" value="방 나가기">
+    </form>
+    <form id="send_room" method="POST" action='#'>
+        <input type="text" name="room_name" id="room_name" placeholder="방 이름">
+        <input type="text" name="room_data" id="room_data" placeholder="메시지">
+        <input type="submit" value="방에 보내기">
+    </form>
+    <form id="close" method="POST" action="#">
+        <input type="text" name="close_room" id="close_room" placeholder="방 이름">
+        <input type="submit" value="방 닫기">
+    </form>
+    <form id="disconnect" method="POST" action="#">
+        <input type="submit" value="연결 해제">
+    </form>
+    <h2>수신:</h2>
+    <div id="log"></div>
+</body>
+</html>
