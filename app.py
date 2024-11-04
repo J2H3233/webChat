@@ -23,6 +23,12 @@ def send_message_event(data):
           room=data.get('number'))
     print("서버에서 보낸 메세지의 주소 " + data.get('number'))
 
+@socketio.event
+def leave_room(data):
+    leave_room(data.get('number'))
+    print('방에서 나갔습니다.')
+
+
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
