@@ -9,121 +9,146 @@
         crossorigin="anonymous"></script>
     <title>웹채팅 인터페이스</title>
     <style>
- * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-}
-body, html {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
 
-}
-.container {
-    background-color: #E0F2FE;
-    display: flex;
-    height: 80vh;
-    min-width: 60vw;
-    flex-direction: column;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
-#header {
-    background-color: darkblue;
-    padding: 10px;
+        body,html {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
-    color: white;
-    font-weight: bold;
+        }
 
-}
-#main {
-    display: flex;
-    flex: 1;
-    height: 100%;
-    background-color: #ffffff;
-    overflow: hidden;
-}
-#sidebar {
-    background-color: rgb(155, 227, 255);
-    width: 250px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 20px;
-    overflow-y: auto;
-}
-.sidebar_element {
-    border: none;
-    border-radius: 5px;
-    padding: 10px 15px;
-    margin: 5px 0;
-    width: 100%;
-    text-align: center;
-    cursor: pointer;
+        .container {
+            background-color: #E0F2FE;
+            display: flex;
+            height: 80vh;
+            min-width: 60vw;
+            flex-direction: column;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
 
-}
+        #header {
+            background-color: darkblue;
+            padding: 10px;
 
-#content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
+            color: white;
+            font-weight: bold;
 
-}
-#messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 10px;
-    border: 1px solid gray;
-    border-radius: 4px;
-    margin-bottom: 10px;
-}
-#input-area {
-    display: flex;
-    padding-top: 10px;
-    white-space: nowrap;
-}
-#message-input {
-    
-    flex: 1;
-    width: 100%;
-    padding: 10px;
-    border: 1px solid gray;
-    border-radius: 4px;
+        }
 
-}
-#send_button {
-    margin-left: 10px;
-    right: 0;
-    padding: 10px 20px;
-    border: none;
-    background-color: blue;
-    color: white;
-    border-radius: 4px;
-}
+        #main {
+            display: flex;
+            flex: 1;
+            height: 100%;
+            background-color: #ffffff;
+            overflow: hidden;
+        }
 
-.system{
-    text-align: center;
-    background-color: rgb(128, 128, 128);
-    border-radius: 10px;
-    color: white;
-    padding: 3px;
-    margin: 3px auto;
-}
-.message{
+        #sidebar {
+            background-color: rgb(155, 227, 255);
+            width: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
 
-}
-.myMessage{
-    text-align: right;
-}
+        .sidebar_element {
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            margin: 5px 0;
+            width: 100%;
+            text-align: center;
+            cursor: pointer;
 
+        }
 
+        #content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
 
+        }
+
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid gray;
+            border-radius: 4px;
+            margin-bottom: 10px;
+
+        }
+
+        #input-area {
+            display: flex;
+            padding-top: 10px;
+            white-space: nowrap;
+        }
+
+        #message-input {
+
+            flex: 1;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid gray;
+            border-radius: 4px;
+
+        }
+
+        #send_button {
+            margin-left: 10px;
+            right: 0;
+            padding: 10px 20px;
+            border: none;
+            background-color: blue;
+            color: white;
+            border-radius: 4px;
+        }
+
+        .system {
+            text-align: center;
+            background-color: rgb(128, 128, 128);
+            border-radius: 10px;
+            color: white;
+            padding: 3px;
+            margin: 3px auto;
+        }
+
+        .myMessage {
+            text-align: end;
+        }
+
+        .nickname {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 3px;
+        }
+
+        .messageContent {
+            display: inline-block;
+            background-color: #d4f3ff;
+            padding: 8px 12px;
+            border-radius: 12px;
+            max-width: 25vw;
+            min-width: 10vw;
+            word-wrap: break-word;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            text-align: start;
+        }
     </style>
+
 </head>
 
 <body>
@@ -137,13 +162,13 @@ body, html {
         </div>
         <div id="main">
             <div id="sidebar">
-                <form id="test" action="#" >
+                <form id="test" action="#">
                     <input class="sidebar_element" type="text" id="setName" placeholder="닉네임 입력">
                     <button class="sidebar_element" id="setName_button" type="button">닉네임 설정</button>
                 </form>
-    
+
                 <form action="#">
-                    <input  class="sidebar_element" type="text" id="selectRoom" placeholder="방 이름 입력">
+                    <input class="sidebar_element" type="text" id="selectRoom" placeholder="방 이름 입력">
                     <button class="sidebar_element" id="selectRoom_button" type="button">방 입장</button>
                     <button class="sidebar_element" id="leaveRoom_button" type="button" disabled>방 나가기</button>
                 </form>
@@ -156,7 +181,7 @@ body, html {
                 </form>
             </div>
         </div>
-       
+
 
     </div>
 
@@ -172,12 +197,11 @@ body, html {
         let nickname = null;
         let nicknameDisplay = document.getElementById('nicknameDisplay')
         let RoomNumberDisplay = document.getElementById('RoomNumberDisplay')
-
+        let selectRoom_button = document.getElementById("selectRoom_button")
+        let leaveRoom_button = document.getElementById("leaveRoom_button")
         let MessageParent = document.getElementById("messages");
 
-
-
-        // 닉네임 설정
+        // 닉네임 설정 임시
         let setName_button = document.getElementById("setName_button")
         setName_button.addEventListener("click", () => {
             let setName = document.getElementById('setName');
@@ -190,10 +214,15 @@ body, html {
             }
 
         })
+
+        // 방 참가 버튼, enter 대응
+        selectRoom_button.addEventListener("click", () => { joinRoom(); })
+        document.getElementById('selectRoom').addEventListener("keydown", (e) => {
+            if (e.key == "Enter") { joinRoom(); }
+        })
+
         // 방 참가
-        let selectRoom_button = document.getElementById("selectRoom_button")
-        let leaveRoom_button = document.getElementById("leaveRoom_button")
-        selectRoom_button.addEventListener("click", () => {
+        function joinRoom() {
             let selectRoom = document.getElementById('selectRoom')
             roomNumber = selectRoom.value
             if (roomNumber.trim() != "") {
@@ -204,7 +233,8 @@ body, html {
                 selectRoom_button.disabled = true
                 leaveRoom_button.disabled = false
             }
-        })
+        }
+
         // 방 나가기
         leaveRoom_button.addEventListener("click", () => {
             socket.emit('handle_leave_room', { number: roomNumber, name: nickname })
@@ -217,35 +247,51 @@ body, html {
             }
         })
 
-        // 메세지 보내기
+        // 키입력 버튼, enter 대응
         document.getElementById("send_button").addEventListener("click", (e) => {
-            event.preventDefault();
-            // 백엔드 전송
-            let messageInput = document.getElementById('message-input')
-            socket.emit('send_message_event', {
-                number: roomNumber,
-                nickname: nickname,
-                message: messageInput.value
-            });
-
-            messageInput.value = "";
+            e.preventDefault();
+            sendMessage();
         })
+        document.getElementById("message-input").addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // 메세지 보내기
+        function sendMessage() {
+            let messageInput = document.getElementById('message-input')
+            if (roomNumber.trim() != "" && nickname.trim() != "" && messageInput.value.trim() != "") {
+                socket.emit('send_message_event', {
+                    number: roomNumber,
+                    nickname: nickname,
+                    message: messageInput.value
+                });
+                messageInput.value = "";
+            }
+        }
+
         // 서버에서 받은 메세지 출력
         socket.on('send_message_event', (data) => {
             let newMessage = document.createElement("div");
             let nicknameDiv = document.createElement("div");
             let messageDiv = document.createElement("div");
-            if(data.nickname!=nickname){
+            if (data.nickname != nickname) {
                 newMessage.classList.add("message")
-            }else{
+            } else {
                 newMessage.classList.add("myMessage")
             }
+            nicknameDiv.classList.add("nickname")
+            messageDiv.classList.add("messageContent")
             nicknameDiv.textContent = `${data.nickname}`;
             messageDiv.textContent = `${data.message}`;
             newMessage.appendChild(nicknameDiv);
             newMessage.appendChild(messageDiv);
             MessageParent.appendChild(newMessage);
         })
+
+
         // 시스템 메세지 출력
         socket.on('system', (system) => {
             let newMessage = document.createElement("div");
