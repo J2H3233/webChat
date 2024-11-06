@@ -59,6 +59,7 @@ def handle_leave_room(data):
 
 
 
+
 # 회원가입기능
 # 미완성
 @socketio.event
@@ -66,7 +67,7 @@ def signup(data):
     email = data.get(email)
     id = data.get(id)
     password = data.get(password)
-    nickname = data.get(nicknamecdd)
+    nickname = data.get(nickname)
 
 # 로그인 기능
 # 미완성
