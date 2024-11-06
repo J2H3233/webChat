@@ -10,90 +10,72 @@
     <title>웹채팅 인터페이스</title>
     <style>
         * {
-            box-sizing: border-box;
-            margin: 0;
             padding: 0;
+            margin: 0;
         }
-
-        body,
-        html {
+        .body, html{
             height: 100%;
-            display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #f0f8ff;
-            /* 배경색 설정 */
-            font-family: Arial, sans-serif;
-        }
-
-        .container {
             display: flex;
-            flex-direction: row;
-            min-height: 700px;
-            width: 90%;
-            /* 기본 너비 설정 */
-            max-width: 1200px;
-            /* 최대 너비 제한 */
-            background-color: white;
-            /* 섬의 배경색 */
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            /* 섬의 그림자 */
-            border-radius: 10px;
-            /* 모서리를 둥글게 */
-            text-align: center;
-            gap: 20px;
-            /* 사이드바와 콘텐츠 간의 여백 */
+            flex-direction: row;  
         }
-
-        #sidebar {
-            width: 300px;
+        .container{
             background-color: antiquewhite;
-            padding: 20px;
-            flex-shrink: 0;
+            display: flex;
+            height: 80vh;
+            
+            min-width: 60vw;
+            flex-direction: column;
+            border-radius: 10px;
+            padding: 5px;
         }
-
-        #content {
-            flex: 1;
-            background-color: #f0f0f0;
+        #header{
+            position: sticky;
+            top: 0;
+            background-color: aquamarine;
+        }
+        
+        #main{
+            display: flex;
+            height: 100%;
+            background-color: brown;
+            position: relative;
+        }
+        
+        #sidebar{
+            flex: 0;
+            background-color: violet;
+            height: 100%;
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            align-items: center;
+            padding: 0 10px;
+            position: relative;
+        }
+        .sidebar_element{
+            display: flex;
+            margin: 10px auto;
+
         }
 
-        #messages {
+        #content{
             flex: 1;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            background-color: white;
-            padding: 10px;
-            border: 1px solid #ccc;
+            background-color: aqua;
+            width: 100%;
+            position: relative;
         }
-
-        .message {
-            margin-bottom: 10px;
-            padding: 5px;
-            border-bottom: 1px solid #eee;
-        }
-
-        #message-input {
+        #input-area {
             flex: 1;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             min-width: 200px;
-            /* 최소 너비 설정 */
-        }
+}
 
-        #send_button {
-            margin-left: 10px;
-            padding: 10px 20px;
-            border: none;
-            background-color: #007bff;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+        
+
+
     </style>
 </head>
 
@@ -102,43 +84,35 @@
 
     </header>
     <div class="container">
-        <div id="sidebar">
-            <div style="margin-bottom: 10px;">
-                <h3 id="nicknameDisplay">nickname :</h3>
-                <h3 id="RoomNumberDisplay">RoomNumber : </h3>
-            </div>
-            <hr>
-            <form id="test" action="#" style="margin-bottom: 10px;margin-top: 10px;">
-                <input type="text" id="setName" placeholder="닉네임 입력"
-                    style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
-                <button id="setName_button" type="button"
-                    style="width: 100%; padding: 10px; margin-bottom: 10px; border: none; background-color: blue; color: white; border-radius: 4px; cursor: pointer;">닉네임
-                    설정</button>
-            </form>
-
-            <form action="#" style="margin-bottom: 20px;margin-top: 10px; ">
-                <input type="text" id="selectRoom" placeholder="방 이름 입력"
-                    style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
-                <button id="selectRoom_button" type="button"
-                    style="width: 100%; padding: 10px; margin-bottom: 10px; border: none; background-color: #28a745; color: white; border-radius: 4px; cursor: pointer;">방
-                    입장</button>
-                <button id="leaveRoom_button" type="button" disabled
-                    style="width: 100%; padding: 10px; border: none; background-color: #dc3545; color: white; border-radius: 4px; cursor: pointer;">방
-                    나가기</button>
-            </form>
-
-
+        <div id="header">
+            <h3 id="nicknameDisplay">nickname :</h3>
+            <h3 id="RoomNumberDisplay">RoomNumber : </h3>
         </div>
-        <div id="content">
-            <div id="messages"></div>
-            <div id="input-area">
-                <form action="#" style="margin-bottom: 20px; display: flex;">
-                    <input type="text" id="message-input" placeholder="메시지를 입력하세요">
-                    <button id="send_button">전송</button>
+        <div id="main">
+            <div id="sidebar">
+                <form id="test" action="#" >
+                    <input class="sidebar_element" type="text" id="setName" placeholder="닉네임 입력">
+                    <button class="sidebar_element" id="setName_button" type="button">닉네임 설정</button>
                 </form>
-
+    
+                <form action="#">
+                    <input  class="sidebar_element" type="text" id="selectRoom" placeholder="방 이름 입력">
+                    <button class="sidebar_element" id="selectRoom_button" type="button">방 입장</button>
+                    <button class="sidebar_element" id="leaveRoom_button" type="button" disabled>방 나가기</button>
+                </form>
+            </div>
+            <div id="content">
+                <div id="messages"></div>
+                <div id="input-area">
+                    <form action="#">
+                        <input type="text" id="message-input" placeholder="메시지를 입력하세요">
+                        <button id="send_button">전송</button>
+                    </form>
+    
+                </div>
             </div>
         </div>
+       
     </div>
 
     <script>

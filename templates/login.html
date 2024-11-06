@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+</head>
+<body>
+    <form action="#">
+        <input type="text" id="id">
+        <input type="text" id="password">
+        <button id="login">입력</button>
+    </form>
+    <a href="/signup">회원가입</a>
+
+
+    <script>
+            document.getElementById("login").addEventListener("click",()=>{
+            let id = document.getElementById('id');
+            let password = doucument.getElementById('password');
+            socket.emit('login',{id : id,password: password})
+        })
+    </script>
+</body>
+</html>
