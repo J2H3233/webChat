@@ -15,7 +15,8 @@
             box-sizing: border-box;
         }
 
-        body,html {
+        body,
+        html {
             height: 100%;
             display: flex;
             justify-content: center;
@@ -187,7 +188,9 @@
 
     <script>
 
-        var socket = io({ transport: ['websocket'] });
+        const socket = io({
+            transports: ['websocket']
+        });
 
         socket.on('connect', function () {
             console.log('서버에 성공적으로 연결되었습니다!');

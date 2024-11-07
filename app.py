@@ -1,10 +1,16 @@
-from flask import Flask, render_template, session, request
-from flask_socketio import SocketIO,send, emit, join_room, leave_room, close_room, rooms, disconnect
+import eventlet
+eventlet.monkey_patch()
+from flask import Flask, render_template, request
+from flask_socketio import SocketIO, send, emit, join_room, leave_room, close_room, rooms, disconnect
+import pymysql
+
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '비밀번호 설정'
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode='eventlet')
+
+db = pymysql.connect(host='43.203.195.110', port=3306, user ='id_j2h', password='Password_j2h!12345', database='chat_app')
 
 
 # url - html 연결
