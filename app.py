@@ -11,7 +11,7 @@ app.config['SECRET_KEY'] = '비밀번호 설정'
 socketio = SocketIO(app, async_mode='eventlet')
 
 db = pymysql.connect(host='43.203.195.110', port=3306, user ='id_j2h', password='Password_j2h!12345', database='chat_app')
-
+cursor = db.cursor()
 
 # url - html 연결
 @app.route('/')
@@ -23,6 +23,35 @@ def render_chat_page():
 @app.route('/login/')
 def render_login_page():
     return render_template('login.html')
+@app.route('/login/set/', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        login_info = request.form
+
+        # 폼에서 입력한 ID와 비밀번호를 가져옵니다.
+        user_id = login_info['username']  # username은 HTML 폼의 input name
+        password = login_info['password']
+
+        sql = "SELECT * FROM users WHERE id=%s"
+        rows_count = cursor.execute(sql, (user_id,))
+
+        if rows_count > 0:
+            user_info = cursor.fetchone()
+            print("user info: ", user_info)
+
+            # 패스워드가 올바른지 확인합니다.
+            is_pw_correct = user_info[3]  # password 열의 인덱스가 3이라고 가정합니다.
+            print("password check: ", is_pw_correct)
+
+            return render_template('login.html', info=user_info)
+
+        else:
+            print('user does not exist')
+            return render_template('login.html', info='user does not exist')
+
+    return render_template('login.html')
+
+
 @app.route('/signup/')
 def render_signup_page():
     return render_template('signup.html')
@@ -66,21 +95,21 @@ def handle_leave_room(data):
 
 
 
-# 회원가입기능
-# 미완성
-@socketio.event
-def signup(data):
-    email = data.get(email)
-    id = data.get(id)
-    password = data.get(password)
-    nickname = data.get(nickname)
+# # 회원가입기능
+# # 미완성
+# @socketio.event
+# def signup(data):
+#     email = data.get(email)
+#     id = data.get(id)
+#     password = data.get(password)
+#     nickname = data.get(nickname)
 
-# 로그인 기능
-# 미완성
-@socketio.event
-def login(data):
-    id = data.get(id)
-    password = data.get(password)
+# # 로그인 기능
+# # 미완성
+# @socketio.event
+# def login(data):
+#     id = data.get(id)
+#     password = data.get(password)
 
 
 
