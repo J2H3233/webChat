@@ -8,146 +8,8 @@
         integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
         crossorigin="anonymous"></script>
     <title>웹채팅 인터페이스</title>
-    <style>
-        * {
-            padding: 0;
-            margin: 0;
-            box-sizing: border-box;
-        }
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/chat.css') }}" type="text/css">
 
-        body,
-        html {
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-        }
-
-        .container {
-            background-color: #E0F2FE;
-            display: flex;
-            height: 80vh;
-            min-width: 60vw;
-            flex-direction: column;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        #header {
-            background-color: darkblue;
-            padding: 10px;
-
-            color: white;
-            font-weight: bold;
-
-        }
-
-        #main {
-            display: flex;
-            flex: 1;
-            height: 100%;
-            background-color: #ffffff;
-            overflow: hidden;
-        }
-
-        #sidebar {
-            background-color: rgb(155, 227, 255);
-            width: 250px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            align-items: center;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .sidebar_element {
-            border: none;
-            border-radius: 5px;
-            padding: 10px 15px;
-            margin: 5px 0;
-            width: 100%;
-            text-align: center;
-            cursor: pointer;
-
-        }
-
-        #content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-
-        }
-
-        #messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
-            border: 1px solid gray;
-            border-radius: 4px;
-            margin-bottom: 10px;
-
-        }
-
-        #input-area {
-            display: flex;
-            padding-top: 10px;
-            white-space: nowrap;
-        }
-
-        #message-input {
-
-            flex: 1;
-            width: 100%;
-            padding: 10px;
-            border: 1px solid gray;
-            border-radius: 4px;
-
-        }
-
-        #send_button {
-            margin-left: 10px;
-            right: 0;
-            padding: 10px 20px;
-            border: none;
-            background-color: blue;
-            color: white;
-            border-radius: 4px;
-        }
-
-        .system {
-            text-align: center;
-            background-color: rgb(128, 128, 128);
-            border-radius: 10px;
-            color: white;
-            padding: 3px;
-            margin: 3px auto;
-        }
-
-        .myMessage {
-            text-align: end;
-        }
-
-        .nickname {
-            font-weight: bold;
-            color: #555;
-            margin-bottom: 3px;
-        }
-
-        .messageContent {
-            display: inline-block;
-            background-color: #d4f3ff;
-            padding: 8px 12px;
-            border-radius: 12px;
-            max-width: 25vw;
-            word-wrap: break-word;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-            text-align: start;
-        }
-    </style>
 
 </head>
 
@@ -167,10 +29,10 @@
                     <button class="sidebar_element" id="setName_button" type="button">닉네임 설정</button>
                 </form> -->
 
-                <form action="#">
-                    <input class="sidebar_element" type="text" id="selectRoom" placeholder="방 이름 입력">
-                    <button class="sidebar_element" id="selectRoom_button" type="button">방 입장</button>
-                    <button class="sidebar_element" id="leaveRoom_button" type="button" disabled>방 나가기</button>
+                <form action="#" class="sidebar_element">
+                    <input type="text" id="selectRoom" placeholder="방 이름 입력">
+                    <button id="selectRoom_button" type="button">방 입장</button>
+                    <button id="leaveRoom_button" type="button" disabled>방 나가기</button>
                 </form>
             </div>
             <div id="content">
@@ -301,7 +163,20 @@
             newMessage.textContent = `${system}`;
             MessageParent.appendChild(newMessage);
         })
+
     </script>
+
+
+
+
+
+
+
+
+
+    <!-- <script src="{{ url_for('static', filename='script/chat.js') }}" type="text/javascript">const nickname = "{{ nickname }}";</script>
+ -->
+
 </body>
 
 </html>
