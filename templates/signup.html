@@ -4,28 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입</title>
-    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"
-    integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
-    crossorigin="anonymous"></script>
-</head>
-<body>
-    <form action="#">
-        <p>이메일 : <input type="text" id="email"></p>
-        <p>아이디 : <input type="text" id="id"></p>
-        <p>비밀번호 : <input type="text" id="password"></p>
-        <p>닉네임 : <input type="text" id="nickname"></p>
-        <p><button id="signup">입력</button></p>
-    </form>
-    <script>
-        
-        document.getElementById("signup").addEventListener("click",()=>{
-            let email = document.getElementById('email');
-            let id = document.getElementById('id');
-            let password = doucument.getElementById('password');
-            let nickname = doucument.getElementById('nickname');
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/body.css') }}" type="text/css">
 
-            socket.emit('signup',{email : email, id : id,password: password,nickname:nickname})
-        })
+    <style>
+        
+    </style>
+
+</head> 
+<body>
+    
+    <form class="box" action="/signup/set/" method="post">
+        
+        <h2>회원가입</h2><br>
+        
+        <div class="inputBox">
+            <input type="text" name="id" value="">
+            <label>아이디</label>
+        </div>
+        <div class="inputBox">
+                <input type="password" name="password" value="">
+                <label>비밀번호</label>
+        </div>
+
+        <div class="inputBox">
+            <input type="date" name="" value="">
+            <label>생년월일</label>
+        </div>
+        <div class="inputBox">
+            <input type="text" name="nickname" value="">
+            <label>닉네임</label>
+        </div>
+        <div class="inputBox">
+                <input type="email" name="email" value="">
+                <label>이메일</label>
+        </div>
+        <div class="box1">
+            <input type="submit" id="login" name="sign-in" value="완료" onclick="">
+        </div>
+
+
+    </form>
+
+    
+
+
+
+
+    <script>
+
     </script>
 </body>
 </html>

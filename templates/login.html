@@ -1,36 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/body.css') }}" type="text/css">
+
+    </style>
+
 </head>
+
 <body>
-    <div class="login-page">
-    <form action="/login/set/" method="POST">
-        <input type="text" placeholder="username" name="username">
-        <input type="password" placeholder="password" name="password">
-        <button type="submit">Login</button>
-    </form>
+    <div class="box">
+        <form class="box1" action="/login/set/" method="POST">
+
+            <h2>Login</h2><br>
+
+            <div class="inputBox">
+                <input type="text" placeholder="username" name="username" value="">
+                <label>아이디</label>
+            </div>
+            <div class="inputBox">
+                <input type="password" placeholder="password" name="password" value="">
+                <label>비밀번호</label>
+            </div>
+            <input type="submit" id="login" name="sign-in" value="로그인">
+        </form>
+        
+        <form class="box2" action="/signup/">
+            <input type="submit" id="signup" value="회원가입">
+        </form>
     </div>
-    <h5>check user_info:{{info}}</h5>
-    <!-- <div>
-        <h1>로그인 테스트</h1>
-        <h2>닉네임 : <span></span></h2>
-        <h2>아이디 : <span></span></h2>
-        <h2>비밀번호 : <span></span></h2>
-        <h2>이메일 : <span></span></h2>
-    </div>
-
-    <a href="/signup">회원가입</a>
-
-
-    <script>
-            document.getElementById("login").addEventListener("click",()=>{
-            let id = document.getElementById('id');
-            let password = doucument.getElementById('password');
-            socket.emit('login',{id : id,password: password})
-        })
-    </script> -->
 </body>
+
 </html>

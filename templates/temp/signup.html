@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+    integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+    crossorigin="anonymous"></script>
+</head>
+<body>
+    <form action="/signup/set/" method="post">
+        <p>이메일 : <input type="text" name="email"></p>
+        <p>아이디 : <input type="text" name="id"></p>
+        <p>비밀번호 : <input type="text" name="password"></p>
+        <p>닉네임 : <input type="text" name="nickname"></p>
+        <p><button id="signup">입력</button></p>
+    </form>
+    <!-- <script>
+        
+        document.getElementById("signup").addEventListener("click",()=>{
+            let email = document.getElementById('email');
+            let id = document.getElementById('id');
+            let password = document.getElementById('password');
+            let nickname = document.getElementById('nickname');
+
+            socket.emit('signup',{email : email, id : id,password: password,nickname:nickname})
+        })
+    </script> -->
+</body>
+</html>

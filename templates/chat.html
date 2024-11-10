@@ -143,7 +143,6 @@
             padding: 8px 12px;
             border-radius: 12px;
             max-width: 25vw;
-            min-width: 10vw;
             word-wrap: break-word;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
             text-align: start;
@@ -158,15 +157,15 @@
     </header>
     <div class="container">
         <div id="header">
-            <h3 id="nicknameDisplay">nickname :</h3>
+            <h3 id="nicknameDisplay">nickname : {{nickname}}</h3>
             <h3 id="RoomNumberDisplay">RoomNumber : </h3>
         </div>
         <div id="main">
             <div id="sidebar">
-                <form id="test" action="#">
+                <!-- <form id="test" action="#">
                     <input class="sidebar_element" type="text" id="setName" placeholder="닉네임 입력">
                     <button class="sidebar_element" id="setName_button" type="button">닉네임 설정</button>
-                </form>
+                </form> -->
 
                 <form action="#">
                     <input class="sidebar_element" type="text" id="selectRoom" placeholder="방 이름 입력">
@@ -197,26 +196,26 @@
         });
 
         let roomNumber = null;
-        let nickname = null;
+        let nickname = "{{nickname}}";
         let nicknameDisplay = document.getElementById('nicknameDisplay')
         let RoomNumberDisplay = document.getElementById('RoomNumberDisplay')
         let selectRoom_button = document.getElementById("selectRoom_button")
         let leaveRoom_button = document.getElementById("leaveRoom_button")
         let MessageParent = document.getElementById("messages");
 
-        // 닉네임 설정 임시
-        let setName_button = document.getElementById("setName_button")
-        setName_button.addEventListener("click", () => {
-            let setName = document.getElementById('setName');
-            nickname = setName.value;
-            if (nickname.trim() != "") {
-                nicknameDisplay.textContent = "nickname : " + nickname;
-                setName.value = " ";
-                setName.disabled = true
-                setName_button.disabled = true;
-            }
+        // // 닉네임 설정 임시
+        // let setName_button = document.getElementById("setName_button")
+        // setName_button.addEventListener("click", () => {
+        //     let setName = document.getElementById('setName');
+        //     nickname = setName.value;
+        //     if (nickname.trim() != "") {
+        //         nicknameDisplay.textContent = "nickname : " + nickname;
+        //         setName.value = " ";
+        //         setName.disabled = true
+        //         setName_button.disabled = true;
+        //     }
 
-        })
+        // })
 
         // 방 참가 버튼, enter 대응
         selectRoom_button.addEventListener("click", () => { joinRoom(); })
