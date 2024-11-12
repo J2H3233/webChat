@@ -41,6 +41,9 @@ document.getElementById('selectRoom').addEventListener("keydown", (e) => {
 
 // 방 참가
 function joinRoom() {
+    while (MessageParent.firstChild) {
+        MessageParent.removeChild(MessageParent.firstChild);
+    }
     let selectRoom = document.getElementById('selectRoom')
     roomNumber = selectRoom.value
     if (roomNumber.trim() != "") {
@@ -62,7 +65,9 @@ leaveRoom_button.addEventListener("click", () => {
     selectRoom.disabled = false
     selectRoom_button.disabled = false
     leaveRoom_button.disabled = true
-    MessageParent.removeChild(MessageParent.firstChild);
+    while (MessageParent.firstChild) {
+        MessageParent.removeChild(MessageParent.firstChild);
+    }
 
 })
 
@@ -89,7 +94,7 @@ socket.on('packet_log', (logEntry) => {
 // 메세지 보내기
 function sendMessage() {
     const messageInput = document.getElementById('message-input');
-    if (roomNumber && messageInput.value.trim() !== "") {
+    if (roomNumber.trim()!== "" && messageInput.value.trim() !== "") {
         socket.emit('send_message_event', {
             number: roomNumber,
             nickname: nickname,
@@ -149,8 +154,8 @@ showExtra.addEventListener("click", () => {
 
 let logCheck = document.getElementById("logCheck")
 
-        // 통신 로그 토글 버튼
-        document.getElementById("showLog").addEventListener("click", () => {
-            const logDiv = document.getElementById('logCheck');
-            logDiv.style.display = logDiv.style.display === "none" ? "block" : "none";
-        });
+// 통신 로그 토글 버튼
+document.getElementById("showLog").addEventListener("click", () => {
+    const logDiv = document.getElementById('logCheck');
+    logDiv.style.display = logDiv.style.display === "none" ? "block" : "none";
+});

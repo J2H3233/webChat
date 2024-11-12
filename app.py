@@ -37,9 +37,10 @@ def login():
     if request.method == 'POST':
         login_info = request.form
         user_id = login_info['username'] 
+        user_password = login_info['password']
 
-        sql = "SELECT * FROM users WHERE id=%s"
-        rows_count = cursor.execute(sql, (user_id))
+        sql = "SELECT * FROM users WHERE id=%s AND password=%s"
+        rows_count = cursor.execute(sql, (user_id,user_password))
 
         if rows_count > 0:
             user_info = cursor.fetchone()
@@ -91,7 +92,7 @@ def capture_packets(message, room, nickname):
         log = []
 
         # 애플리케이션 계층
-        log.append(f"Application Layer: Message = {message}")
+        log.append(f"응용층 데이터: Message = {message}")
 
         # 데이터 링크 계층 (MAC 주소)
         if Ether in packet:
@@ -99,7 +100,7 @@ def capture_packets(message, room, nickname):
                 'source_mac': packet[Ether].src,
                 'destination_mac': packet[Ether].dst
             }
-            log.append(f"Data Link Layer: {data_link_layer}")
+            log.append(f"데이터 링크층: {data_link_layer}")
 
         # 네트워크 계층 (IP 주소)
         if IP in packet:
@@ -108,7 +109,7 @@ def capture_packets(message, room, nickname):
                 'destination_ip': packet[IP].dst,
                 'ttl': packet[IP].ttl
             }
-            log.append(f"Network Layer: {network_layer}")
+            log.append(f"네트워크 층: {network_layer}")
 
         # 전송 계층 (TCP 포트 및 체크섬)
         if TCP in packet:
@@ -118,7 +119,7 @@ def capture_packets(message, room, nickname):
                 'sequence_number': packet[TCP].seq,
                 'checksum': packet[TCP].chksum
             }
-            log.append(f"Transport Layer: {transport_layer}")
+            log.append(f"전송층: {transport_layer}")
 
         # 각 계층별 로그를 클라이언트에 전송
         for entry in log:
