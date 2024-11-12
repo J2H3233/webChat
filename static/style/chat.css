@@ -33,7 +33,7 @@
 
         }
 
-        #main {
+        .main {
             display: flex;
             flex: 1;
             height: 100%;
@@ -52,7 +52,7 @@
             overflow-y: auto;
         }
 
-        .sidebar_element *{
+        .sidebar_element * {
             border: none;
             border-radius: 5px;
             padding: 10px 15px;
@@ -136,3 +136,65 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
             text-align: start;
         }
+
+        #extra {
+            flex: 1;
+            max-width: 100px;
+            background-color: rgb(155, 227, 255);
+            border-radius: 20px;
+            margin: 5px;
+            display: none;
+            margin: 20px 20px 20px 0;
+            justify-content: center; 
+            overflow-y: auto; 
+        }
+
+        #showExtra {
+            width: 40px;
+            height: 40px;
+            border: 0;
+            background-color: rgb(196, 196, 196);
+            border-radius: 5px;
+            margin: auto 5px;
+            font-size: 25px;
+        }
+
+        .function_button {
+            width: 80px; 
+            height: 80px; 
+            border-radius: 100%; 
+            border: 0; 
+            margin: 10px; 
+            font-size: 10px;
+            
+        }
+
+        /* #joinedRoom {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid gray;
+            border-radius: 4px;
+            background-color: #f0f0f0;
+            width: 100%;
+            margin: 20px auto;
+            max-height: auto; 
+            overflow-y: auto; 
+        }
+        
+        .room-entry {
+            width: 100%;
+            padding: 20px auto;
+            margin: 5px auto;
+            background-color: #d0e0ff;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+        } */
+         

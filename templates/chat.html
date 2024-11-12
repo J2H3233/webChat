@@ -4,178 +4,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>웹채팅 인터페이스</title>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"
         integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
         crossorigin="anonymous"></script>
-    <title>웹채팅 인터페이스</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style/chat.css') }}" type="text/css">
-
-
 </head>
 
 <body>
-    <header>
 
-    </header>
     <div class="container">
         <div id="header">
-            <h3 id="nicknameDisplay">nickname : {{nickname}}</h3>
-            <h3 id="RoomNumberDisplay">RoomNumber : </h3>
+            <h3 id="nicknameDisplay" data-nickname="{{ nickname }}">이름 : {{ nickname }}</h3>
+            <h3 id="RoomNumberDisplay">방 이름 : </h3>
         </div>
-        <div id="main">
-            <div id="sidebar">
-                <!-- <form id="test" action="#">
-                    <input class="sidebar_element" type="text" id="setName" placeholder="닉네임 입력">
-                    <button class="sidebar_element" id="setName_button" type="button">닉네임 설정</button>
-                </form> -->
 
+        <div class="main">
+            <div id="sidebar">
                 <form action="#" class="sidebar_element">
                     <input type="text" id="selectRoom" placeholder="방 이름 입력">
                     <button id="selectRoom_button" type="button">방 입장</button>
                     <button id="leaveRoom_button" type="button" disabled>방 나가기</button>
                 </form>
             </div>
+
             <div id="content">
                 <div id="messages"></div>
                 <form action="#" id="input-area">
                     <input type="text" id="message-input" placeholder="메시지를 입력하세요">
                     <button id="send_button">전송</button>
+                    <button id="showExtra" type="button">+</button>
                 </form>
             </div>
+
+            <div id="extra">
+                <button class="function_button" id="showLog">통신 로그 보기</button>
+                <button class="function_button">이미지 첨부</button>
+            </div>
         </div>
+    </div>
 
-
+    <!-- 패킷 로그 표시 영역 -->
+    <div id="logCheck" style="display: none; width: 300px; background-color: antiquewhite; margin: 10px; height: 80%; overflow-y: auto;">
+        <!-- 패킷 로그가 이곳에 표시됩니다 -->
     </div>
 
     <script>
-
-        const socket = io({
-            transports: ['websocket']
-        });
-
-        socket.on('connect', function () {
-            console.log('서버에 성공적으로 연결되었습니다!');
-        });
-
-        let roomNumber = null;
-        let nickname = "{{nickname}}";
-        let nicknameDisplay = document.getElementById('nicknameDisplay')
-        let RoomNumberDisplay = document.getElementById('RoomNumberDisplay')
-        let selectRoom_button = document.getElementById("selectRoom_button")
-        let leaveRoom_button = document.getElementById("leaveRoom_button")
-        let MessageParent = document.getElementById("messages");
-
-        // // 닉네임 설정 임시
-        // let setName_button = document.getElementById("setName_button")
-        // setName_button.addEventListener("click", () => {
-        //     let setName = document.getElementById('setName');
-        //     nickname = setName.value;
-        //     if (nickname.trim() != "") {
-        //         nicknameDisplay.textContent = "nickname : " + nickname;
-        //         setName.value = " ";
-        //         setName.disabled = true
-        //         setName_button.disabled = true;
-        //     }
-
-        // })
-
-        // 방 참가 버튼, enter 대응
-        selectRoom_button.addEventListener("click", () => { joinRoom(); })
-        document.getElementById('selectRoom').addEventListener("keydown", (e) => {
-            if (e.key == "Enter") { joinRoom(); }
-        })
-
-        // 방 참가
-        function joinRoom() {
-            let selectRoom = document.getElementById('selectRoom')
-            roomNumber = selectRoom.value
-            if (roomNumber.trim() != "") {
-                document.getElementById('RoomNumberDisplay').textContent = "RoomNumber : " + roomNumber;
-                socket.emit('handle_join_room', { number: roomNumber, name: nickname });
-                selectRoom.value = ""
-                selectRoom.disabled = true
-                selectRoom_button.disabled = true
-                leaveRoom_button.disabled = false
-            }
-        }
-
-        // 방 나가기
-        leaveRoom_button.addEventListener("click", () => {
-            socket.emit('handle_leave_room', { number: roomNumber, name: nickname })
-            RoomNumberDisplay.textContent = "RoomNumber : "
-            selectRoom.disabled = false
-            selectRoom_button.disabled = false
-            leaveRoom_button.disabled = true
-            while (MessageParent.firstChild) {
-                MessageParent.removeChild(MessageParent.firstChild);
-            }
-        })
-
-        // 키입력 버튼, enter 대응
-        document.getElementById("send_button").addEventListener("click", (e) => {
-            e.preventDefault();
-            sendMessage();
-        })
-        document.getElementById("message-input").addEventListener("keydown", (e) => {
-            if (e.key === "Enter") {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-
-        // 메세지 보내기
-        function sendMessage() {
-            let messageInput = document.getElementById('message-input')
-            if (roomNumber.trim() != "" && nickname.trim() != "" && messageInput.value.trim() != "") {
-                socket.emit('send_message_event', {
-                    number: roomNumber,
-                    nickname: nickname,
-                    message: messageInput.value
-                });
-                messageInput.value = "";
-            }
-        }
-
-        // 서버에서 받은 메세지 출력
-        socket.on('send_message_event', (data) => {
-            let newMessage = document.createElement("div");
-            let nicknameDiv = document.createElement("div");
-            let messageDiv = document.createElement("div");
-            if (data.nickname != nickname) {
-                newMessage.classList.add("message")
-            } else {
-                newMessage.classList.add("myMessage")
-            }
-            nicknameDiv.classList.add("nickname")
-            messageDiv.classList.add("messageContent")
-            nicknameDiv.textContent = `${data.nickname}`;
-            messageDiv.textContent = `${data.message}`;
-            newMessage.appendChild(nicknameDiv);
-            newMessage.appendChild(messageDiv);
-            MessageParent.appendChild(newMessage);
-        })
-
-
-        // 시스템 메세지 출력
-        socket.on('system', (system) => {
-            let newMessage = document.createElement("div");
-            newMessage.classList.add("system");
-            newMessage.textContent = `${system}`;
-            MessageParent.appendChild(newMessage);
-        })
-
+        const nickname = "{{ nickname }}";
     </script>
-
-
-
-
-
-
-
-
-
-    <!-- <script src="{{ url_for('static', filename='script/chat.js') }}" type="text/javascript">const nickname = "{{ nickname }}";</script>
- -->
+    <script src="{{ url_for('static', filename='script/chat.js') }}"></script>
 
 </body>
 
