@@ -132,4 +132,4 @@ def handle_leave_room(data):
     emit('system', f"{data.get('name')}님이 채팅방에서 나갔습니다.", to=data.get('number'))
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=True,host="0.0.0.0")
