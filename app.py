@@ -83,42 +83,47 @@ def send_message_event(data):
     message = data.get('message')
     emit('send_message_event', {'message': message, 'nickname': nickname}, room=room)
 
-def start_packet_capture():
-    sniff(filter="tcp", prn=process_packet, store=0)
+    # 패킷 캡처 시작
+    threading.Thread(target=capture_packets, args=(message, room, nickname)).start()
 
-def process_packet(packet):
-    log = []
+def capture_packets(message, room, nickname):
+    packets = sniff(filter="tcp", count=1)  # TCP 패킷 하나만 캡처
+    for packet in packets:
+        log = []
 
-    # 데이터 링크 계층
-    if Ether in packet:
-        data_link_layer = {
-            'source_mac': packet[Ether].src,
-            'destination_mac': packet[Ether].dst
-        }
-        log.append(f"데이터 링크층: {data_link_layer}")
+        # 애플리케이션 계층
+        log.append(f"응용층 데이터: Message = {message}")
 
-    # 네트워크 계층
-    if IP in packet:
-        network_layer = {
-            'source_ip': packet[IP].src,
-            'destination_ip': packet[IP].dst,
-            'ttl': packet[IP].ttl
-        }
-        log.append(f"네트워크 층: {network_layer}")
+        # 데이터 링크 계층 (MAC 주소)
+        if Ether in packet:
+            data_link_layer = {
+                'source_mac': packet[Ether].src,
+                'destination_mac': packet[Ether].dst
+            }
+            log.append(f"데이터 링크층: {data_link_layer}")
 
-    # 전송 계층
-    if TCP in packet:
-        transport_layer = {
-            'source_port': packet[TCP].sport,
-            'destination_port': packet[TCP].dport,
-            'sequence_number': packet[TCP].seq,
-            'checksum': packet[TCP].chksum
-        }
-        log.append(f"전송층: {transport_layer}")
+        # 네트워크 계층 (IP 주소)
+        if IP in packet:
+            network_layer = {
+                'source_ip': packet[IP].src,
+                'destination_ip': packet[IP].dst,
+                'ttl': packet[IP].ttl
+            }
+            log.append(f"네트워크 층: {network_layer}")
 
-    # 각 계층별 로그를 서버의 모든 클라이언트에 전송
-    for entry in log:
-        socketio.emit('packet_log', entry)
+        # 전송 계층 (TCP 포트 및 체크섬)
+        if TCP in packet:
+            transport_layer = {
+                'source_port': packet[TCP].sport,
+                'destination_port': packet[TCP].dport,
+                'sequence_number': packet[TCP].seq,
+                'checksum': packet[TCP].chksum
+            }
+            log.append(f"전송층: {transport_layer}")
+
+        # 각 계층별 로그를 클라이언트에 전송
+        for entry in log:
+            socketio.emit('packet_log', entry, to=room)
 
 # 채팅방 나감
 @socketio.event
@@ -127,6 +132,4 @@ def handle_leave_room(data):
     emit('system', f"{data.get('name')}님이 채팅방에서 나갔습니다.", to=data.get('number'))
 
 if __name__ == '__main__':
-    capture_thread = threading.Thread(target=start_packet_capture)
-    capture_thread.start()
-    socketio.run(app, debug=True,host="0.0.0.0")
+    socketio.run(app, debug=True)
