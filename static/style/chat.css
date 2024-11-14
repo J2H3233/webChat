@@ -170,11 +170,12 @@
         }
         #logCheck{
             display: none; 
-            width: 300px; 
+            width: 500px; 
             background-color: antiquewhite; 
             margin: 10px; 
             height: 80%;
             padding: 10px; 
             overflow-y: auto;
+            font-size: 7px;
         }
         
