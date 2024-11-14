@@ -89,6 +89,7 @@ socket.on('packet_log', (logEntry) => {
     const logMessage = document.createElement('div');
     logMessage.textContent = logEntry;
     logDiv.appendChild(logMessage);
+    scrollToBottom(); 
 });
 
 // 메세지 보내기
