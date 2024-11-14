@@ -87,10 +87,8 @@ document.getElementById("message-input").addEventListener("keydown", (e) => {
 socket.on('packet_log', (logEntry) => {
     const logDiv = document.getElementById('logCheck');
     const logMessage = document.createElement('div');
-    for(i=0; i<logEntry.length;i++){
-        logMessage.textContent = logEntry[i];
-        logDiv.appendChild(logMessage);
-    }
+    logMessage.textContent = logEntry;
+    logDiv.appendChild(logMessage);
 });
 
 // 메세지 보내기

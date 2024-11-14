@@ -86,7 +86,7 @@ def send_message_event(data):
     # 패킷 캡처 시작
     threading.Thread(target=capture_packets, args=(message, room, nickname)).start()
 
-def capture_packets(message, room, nickname):
+def capture_packets(message, room):
     packets = sniff(filter="tcp", count=1)  # TCP 패킷 하나만 캡처
     for packet in packets:
         log = []
