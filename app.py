@@ -16,23 +16,23 @@ db = pymysql.connect(host='43.203.195.110', port=3306, user='id_j2h', password='
 cursor = db.cursor()
 
 # URL과 HTML 연결
+# @app.route('/')
+# def render_main_page():
+#     return render_template('index.html')
+
 @app.route('/')
-def render_main_page():
-    return render_template('index.html')
+def render_login_page():
+    return render_template('login.html')
 
 @app.route('/chat/')
 def render_chat_page():
     return render_template('chat.html')
 
-@app.route('/login/')
-def render_login_page():
-    return render_template('login.html')
-
 @app.route('/signup/')
 def render_signup_page():
     return render_template('signup.html')
 
-@app.route('/login/set/', methods=['GET', 'POST'])
+@app.route('/login/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         login_info = request.form
@@ -132,4 +132,4 @@ def handle_leave_room(data):
     emit('system', f"{data.get('name')}님이 채팅방에서 나갔습니다.", to=data.get('number'))
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=True, host="0.0.0.0")
