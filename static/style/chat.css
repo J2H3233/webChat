@@ -168,33 +168,13 @@
             font-size: 10px;
             
         }
-
-        /* #joinedRoom {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 15px;
-            border: 1px solid gray;
-            border-radius: 4px;
-            background-color: #f0f0f0;
-            width: 100%;
-            margin: 20px auto;
-            max-height: auto; 
-            overflow-y: auto; 
+        #logCheck{
+            display: none; 
+            width: 300px; 
+            background-color: antiquewhite; 
+            margin: 10px; 
+            height: 80%;
+            padding: 10px; 
+            overflow-y: auto;
         }
         
-        .room-entry {
-            width: 100%;
-            padding: 20px auto;
-            margin: 5px auto;
-            background-color: #d0e0ff;
-            border-radius: 6px;
-            text-align: center;
-            font-size: 1em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-        } */
-         

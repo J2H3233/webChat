@@ -91,7 +91,6 @@ socket.on('packet_log', (logEntry) => {
         logMessage.textContent = logEntry[i];
         logDiv.appendChild(logMessage);
     }
-
 });
 
 // 메세지 보내기
