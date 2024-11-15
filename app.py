@@ -1,14 +1,22 @@
 import eventlet
 eventlet.monkey_patch()
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify,send_from_directory
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_cors import CORS
 import pymysql
 from scapy.all import sniff, IP, TCP, Ether
 import threading
+import os
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = 'uploads/'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '비밀번호 설정'
+app.config['UPLOAD_FOLDER'] = os.path.join(app.static_folder, 'uploads')
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)  # 폴더가 없으면 생성  # static/uploads 폴더 사용
+app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 CORS(app)
 socketio = SocketIO(app, async_mode='eventlet')
 
@@ -68,6 +76,10 @@ def signup():
 @socketio.on('connect')
 def handle_connect():
     print('클라이언트가 서버에 연결되었습니다!')
+
+@socketio.on('send_image_event')
+def handle_send_image(data):
+    emit('send_image_event', data, broadcast=True)
 
 # 채팅방 참여
 @socketio.event
@@ -130,6 +142,30 @@ def capture_packets(message, room, nickname):
 def handle_leave_room(data):
     leave_room(data.get('number'))
     emit('system', f"{data.get('name')}님이 채팅방에서 나갔습니다.", to=data.get('number'))
+# 확장자 확인 함수
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
+# 업로드된 파일 처리
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        return jsonify({'url': f'/static/uploads/{filename}'}), 200
+    else:
+        return jsonify({'error': 'File not allowed'}), 400
+
+# 업로드된 파일을 직접 제공하는 라우트
+@app.route('/static/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host="0.0.0.0")

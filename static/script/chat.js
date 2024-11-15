@@ -125,6 +125,30 @@ socket.on('send_message_event', (data) => {
 
     scrollToBottom();
 })
+
+function print_message(data){
+    let newMessage = document.createElement("div");
+    let nicknameDiv = document.createElement("div");
+    let messageDiv = document.createElement("div");
+    if (data.nickname != nickname) {
+        newMessage.classList.add("message")
+    } else {
+        newMessage.classList.add("myMessage")
+    }
+    nicknameDiv.classList.add("nickname")
+    messageDiv.classList.add("messageContent")
+    nicknameDiv.textContent = `${data.nickname}`;
+    messageDiv.textContent = `${data.message}`;
+    newMessage.appendChild(nicknameDiv);
+    newMessage.appendChild(messageDiv);
+    MessageParent.appendChild(newMessage);
+
+    scrollToBottom();
+}
+
+
+
+
 // 스크롤 자동 이동
 function scrollToBottom() {
     MessageParent.scrollTop = MessageParent.scrollHeight;
@@ -159,4 +183,53 @@ let logCheck = document.getElementById("logCheck")
 document.getElementById("showLog").addEventListener("click", () => {
     const logDiv = document.getElementById('logCheck');
     logDiv.style.display = logDiv.style.display === "none" ? "block" : "none";
+});
+document.getElementById("uploadImage").addEventListener("click", () => {
+    document.getElementById("imageInput").click();
+});
+
+document.getElementById("imageInput").addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        fetch("/upload", {
+            method: "POST",
+            body: formData,
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.url) {
+                // 이미지 업로드 성공 시, 이미지 URL을 메시지로 전송하거나 채팅에 표시
+                socket.emit('send_image_event', { url: data.url });
+            }
+        });
+    }
+});
+
+
+socket.on('send_image_event', (data) => {
+    const newMessage = document.createElement("div");
+    const nicknameDiv = document.createElement("div");
+    const img = document.createElement("img");
+
+    // 닉네임 설정
+    nicknameDiv.textContent = `${data.nickname}`;
+    nicknameDiv.classList.add("nickname");
+
+    // 이미지 설정
+    img.src = data.url;
+    img.alt = "Uploaded Image";
+    img.classList.add("uploaded-image");
+
+    // 본인의 이미지인지 확인하여 스타일 적용
+    if (data.nickname === nickname) {
+        newMessage.classList.add("myImage");
+    }
+
+    newMessage.appendChild(nicknameDiv);
+    newMessage.appendChild(img);
+    document.getElementById("messages").appendChild(newMessage);
+    scrollToBottom();
 });

@@ -145,8 +145,8 @@
             margin: 5px;
             display: none;
             margin: 20px 20px 20px 0;
-            justify-content: center; 
-            overflow-y: auto; 
+            justify-content: center;
+            overflow-y: auto;
         }
 
         #showExtra {
@@ -160,22 +160,33 @@
         }
 
         .function_button {
-            width: 80px; 
-            height: 80px; 
-            border-radius: 100%; 
-            border: 0; 
-            margin: 10px; 
+            width: 80px;
+            height: 80px;
+            border-radius: 100%;
+            border: 0;
+            margin: 10px;
             font-size: 10px;
-            
+
         }
-        #logCheck{
-            display: none; 
-            width: 500px; 
-            background-color: antiquewhite; 
-            margin: 10px; 
+
+        #logCheck {
+            display: none;
+            width: 500px;
+            background-color: antiquewhite;
+            margin: 10px;
             height: 80%;
-            padding: 10px; 
+            padding: 10px;
             overflow-y: auto;
             font-size: 7px;
         }
-        
+
+        .uploaded-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            margin: 5px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .myImage{
+            text-align: end;
+        }
