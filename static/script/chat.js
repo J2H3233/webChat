@@ -126,28 +126,6 @@ socket.on('send_message_event', (data) => {
     scrollToBottom();
 })
 
-function print_message(data){
-    let newMessage = document.createElement("div");
-    let nicknameDiv = document.createElement("div");
-    let messageDiv = document.createElement("div");
-    if (data.nickname != nickname) {
-        newMessage.classList.add("message")
-    } else {
-        newMessage.classList.add("myMessage")
-    }
-    nicknameDiv.classList.add("nickname")
-    messageDiv.classList.add("messageContent")
-    nicknameDiv.textContent = `${data.nickname}`;
-    messageDiv.textContent = `${data.message}`;
-    newMessage.appendChild(nicknameDiv);
-    newMessage.appendChild(messageDiv);
-    MessageParent.appendChild(newMessage);
-
-    scrollToBottom();
-}
-
-
-
 
 // 스크롤 자동 이동
 function scrollToBottom() {
@@ -193,6 +171,7 @@ document.getElementById("imageInput").addEventListener("change", (event) => {
     if (file) {
         const formData = new FormData();
         formData.append("file", file);
+        formData.append("nickname", nickname);
 
         fetch("/upload", {
             method: "POST",
@@ -201,8 +180,8 @@ document.getElementById("imageInput").addEventListener("change", (event) => {
         .then((response) => response.json())
         .then((data) => {
             if (data.url) {
-                // 이미지 업로드 성공 시, 이미지 URL을 메시지로 전송하거나 채팅에 표시
-                socket.emit('send_image_event', { url: data.url });
+                // 이미지 업로드 성공 시 서버로 닉네임과 이미지 URL 전송
+                socket.emit('send_image_event', { url: data.url, nickname: nickname });
             }
         });
     }

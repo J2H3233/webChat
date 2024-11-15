@@ -1,6 +1,6 @@
 import eventlet
-eventlet.monkey_patch()
-from flask import Flask, render_template, request, jsonify,send_from_directory
+eventlet.monkey_patch() 
+from flask import Flask, render_template, request, jsonify,send_from_directory,redirect, url_for, flash
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_cors import CORS
 import pymysql
@@ -34,43 +34,50 @@ def render_login_page():
 
 @app.route('/chat/')
 def render_chat_page():
-    return render_template('chat.html')
+    nickname = request.args.get('nickname', '익명')
+    return render_template('chat.html', nickname=nickname)
 
 @app.route('/signup/')
 def render_signup_page():
     return render_template('signup.html')
 
-@app.route('/login/', methods=['GET', 'POST'])
+
+@app.route('/login/', methods=['POST'])
 def login():
-    if request.method == 'POST':
-        login_info = request.form
-        user_id = login_info['username'] 
-        user_password = login_info['password']
+    username = request.form.get('username')
+    password = request.form.get('password')
+    sql = "SELECT * FROM users WHERE id=%s AND password=%s"
+    result = cursor.execute(sql, (username, password))
 
-        sql = "SELECT * FROM users WHERE id=%s AND password=%s"
-        rows_count = cursor.execute(sql, (user_id,user_password))
+    if result > 0:
+        user_info = cursor.fetchone()
+        flash(f"환영합니다, {user_info[1]}!", "success")
+        return redirect(url_for('render_chat_page', nickname=user_info[1]))  # 닉네임 전달
+    else:
+        flash("아이디 또는 비밀번호가 잘못되었습니다.", "danger")
+        return redirect(url_for('render_login_page'))
 
-        if rows_count > 0:
-            user_info = cursor.fetchone()
-            return render_template('chat.html', nickname=user_info[1])
-        else:
-            return render_template('login.html', info='user does not exist')
-
-    return render_template('login.html')
-
-@app.route('/signup/set/', methods=['GET', 'POST'])
+@app.route('/signup/set/', methods=['POST'])
 def signup():
-    if request.method == 'POST':
-        signup_info = request.form
-        sql = """
-            INSERT INTO users (nickname, id, password, email)
-            VALUES (%s, %s, %s, %s);
-        """
-        cursor.execute(sql, (signup_info['nickname'], signup_info['id'], signup_info['password'], signup_info['email']))
+    user_data = {
+        "id": request.form.get('id'),
+        "password": request.form.get('password'),
+        "nickname": request.form.get('nickname'),
+        "email": request.form.get('email'),
+    }
+    sql = """
+        INSERT INTO users (id, password, nickname, email)
+        VALUES (%s, %s, %s, %s);
+    """
+    try:
+        cursor.execute(sql, (user_data["id"], user_data["password"], user_data["nickname"], user_data["email"]))
         db.commit()
-        return render_template('login.html')
-
-    return render_template('login.html')
+        flash("회원가입이 완료되었습니다! 로그인해주세요.", "success")
+        return redirect(url_for('render_login_page'))
+    except Exception as e:
+        db.rollback()
+        flash(f"회원가입 실패: {str(e)}", "danger")
+        return redirect(url_for('render_signup_page'))
 
 # 클라이언트 - 서버 연결 이벤트
 @socketio.on('connect')
@@ -152,13 +159,14 @@ def upload_file():
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
     file = request.files['file']
+    nickname = request.form.get('nickname', '홍길동')  # 닉네임 받기
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
-        return jsonify({'url': f'/static/uploads/{filename}'}), 200
+        return jsonify({'url': f'/static/uploads/{filename}', 'nickname': nickname}), 200
     else:
         return jsonify({'error': 'File not allowed'}), 400
 
