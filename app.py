@@ -23,18 +23,13 @@ socketio = SocketIO(app, async_mode='eventlet')
 db = pymysql.connect(host='43.203.195.110', port=3306, user='id_j2h', password='Password_j2h!12345', database='chat_app')
 cursor = db.cursor()
 
-# URL과 HTML 연결
-# @app.route('/')
-# def render_main_page():
-#     return render_template('index.html')
-
 @app.route('/')
 def render_login_page():
     return render_template('login.html')
 
 @app.route('/chat/')
 def render_chat_page():
-    nickname = request.args.get('nickname', '익명')
+    nickname = request.args.get('nickname')
     return render_template('chat.html', nickname=nickname)
 
 @app.route('/signup/')
@@ -116,27 +111,26 @@ def capture_packets(message, room, nickname):
         # 데이터 링크 계층 (MAC 주소)
         if Ether in packet:
             data_link_layer = {
-                'source_mac': packet[Ether].src,
-                'destination_mac': packet[Ether].dst
+                '출발지 물리 주소': packet[Ether].src,
+                '목적지 물리 주소': packet[Ether].dst
             }
             log.append(f"데이터 링크층: {data_link_layer}")
 
         # 네트워크 계층 (IP 주소)
         if IP in packet:
             network_layer = {
-                'source_ip': packet[IP].src,
-                'destination_ip': packet[IP].dst,
-                'ttl': packet[IP].ttl
+                '출발지 IP 주소': packet[IP].src,
+                '목적지 IP 주소': packet[IP].dst,
             }
             log.append(f"네트워크 층: {network_layer}")
 
         # 전송 계층 (TCP 포트 및 체크섬)
         if TCP in packet:
             transport_layer = {
-                'source_port': packet[TCP].sport,
-                'destination_port': packet[TCP].dport,
-                'sequence_number': packet[TCP].seq,
-                'checksum': packet[TCP].chksum
+                '출발지 포트': packet[TCP].sport,
+                '목적지 포트': packet[TCP].dport,
+                '전송 순서': packet[TCP].seq,
+                '체크섬': packet[TCP].chksum
             }
             log.append(f"전송층: {transport_layer}")
 
