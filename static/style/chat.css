@@ -60,7 +60,17 @@
             cursor: pointer;
 
         }
-
+        /* #logout_button {
+            width: 100%;
+            padding: 10px;
+            background-color: darkred; 
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            text-align: center;
+        } */
+        
         #content {
             flex: 1;
             display: flex;

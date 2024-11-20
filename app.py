@@ -1,6 +1,6 @@
 import eventlet
-eventlet.monkey_patch() 
-from flask import Flask, render_template, request, jsonify,send_from_directory,redirect, url_for, flash
+eventlet.monkey_patch()
+from flask import Flask, render_template, request, jsonify, send_from_directory, redirect, url_for, flash
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_cors import CORS
 import pymysql
@@ -35,7 +35,6 @@ def render_chat_page():
 @app.route('/signup/')
 def render_signup_page():
     return render_template('signup.html')
-
 
 @app.route('/login/', methods=['POST'])
 def login():
@@ -143,6 +142,7 @@ def capture_packets(message, room, nickname):
 def handle_leave_room(data):
     leave_room(data.get('number'))
     emit('system', f"{data.get('name')}님이 채팅방에서 나갔습니다.", to=data.get('number'))
+
 # 확장자 확인 함수
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
