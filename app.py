@@ -1,5 +1,6 @@
 # import eventlet
 # eventlet.monkey_patch()
+import re
 from flask import Flask, render_template, request, jsonify, send_from_directory, redirect, url_for, flash
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_cors import CORS
@@ -19,7 +20,7 @@ app.config['UPLOAD_FOLDER'] = os.path.join(app.static_folder, 'uploads')
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS
 CORS(app)
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode='eventlet')
 
 # Flask-Login 설정
 login_manager = LoginManager(app)
@@ -226,8 +227,6 @@ def capture_packets(message, room, nickname):
 # 확장자 확인 함수
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
-
-# 업로드된 파일 처리
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -237,17 +236,21 @@ def upload_file():
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
     if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
+        filename = safe_filename(file.filename)  # 안전한 파일 이름 생성
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(filepath)
+        file.save(filepath)  # 파일 저장
         return jsonify({'url': f'/static/uploads/{filename}', 'nickname': nickname}), 200
     else:
         return jsonify({'error': 'File not allowed'}), 400
-
 # 업로드된 파일을 직접 제공하는 라우트
 @app.route('/static/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+def safe_filename(filename):
+    # 파일 이름에서 허용되지 않는 문자를 제거 (알파벳, 숫자, 밑줄, 하이픈, 마침표만 허용)
+    safe_name = re.sub(r'[^a-zA-Z0-9_.-]', '_', filename)
+    return safe_name.strip("._")  # 앞뒤 불필요한 마침표, 밑줄 제거
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host="0.0.0.0")
