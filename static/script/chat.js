@@ -89,9 +89,12 @@ socket.on('packet_log', (logEntry) => {
     const logMessage = document.createElement('div');
     logMessage.textContent = logEntry;
     logDiv.appendChild(logMessage);
-    scrollToBottom(); 
+    scrollToLogBottom();
 });
-
+function scrollToLogBottom() {
+    const logDiv = document.getElementById('logCheck');
+    logDiv.scrollTop = logDiv.scrollHeight;
+}
 // 메세지 보내기
 function sendMessage() {
     const messageInput = document.getElementById('message-input');
@@ -213,6 +216,8 @@ socket.on('send_image_event', (data) => {
         newMessage.appendChild(nicknameDiv);
         newMessage.appendChild(img);
         document.getElementById("messages").appendChild(newMessage);
-        scrollToBottom();
+        img.onload = () => {
+            scrollToBottom();
+        };
     }
 });
