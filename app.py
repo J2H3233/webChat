@@ -211,7 +211,8 @@ def capture_packets(message, room, nickname):
     ether_layer = {
         '출발지 MAC주소': src_mac,
         '목적지 MAC주소': dst_mac,
-        '패킷 유형': f"{hex(packet[Ether].type)} ({packet_type})"
+        '패킷 유형': f"{hex(packet[Ether].type)} ({packet_type})",
+        '체크섬': hex(packet[Ether].chksum)  # IP 체크섬
     }
     log.append(f"[데이터 링크층] {ether_layer}")
 
@@ -239,7 +240,8 @@ def capture_packets(message, room, nickname):
         '출발지 IP': src_ip,
         '목적지 IP': dst_ip,
         '패킷 생존시간': packet[IP].ttl,  # Time-to-Live
-        '프로토콜': f"{packet[IP].proto} ({protocol})"
+        '프로토콜': f"{packet[IP].proto} ({protocol})",
+        '체크섬': hex(packet[IP].chksum)  # IP 체크섬
     }
     log.append(f"[네트워크층] {ip_layer}")
 
@@ -249,6 +251,7 @@ def capture_packets(message, room, nickname):
         '출발 포트': packet[TCP].sport,
         '도착 포트': packet[TCP].dport,
         '순서 번호': packet[TCP].seq,
+        '체크섬': hex(packet[TCP].chksum)  # IP 체크섬
         }
         log.append(f"[전송층] {tcp_layer}")
 
