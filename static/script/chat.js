@@ -172,6 +172,7 @@ document.getElementById("imageInput").addEventListener("change", (event) => {
         const formData = new FormData();
         formData.append("file", file);
         formData.append("nickname", nickname);
+        formData.append("room", roomNumber); // 방 번호 추가
 
         fetch("/upload", {
             method: "POST",
@@ -181,7 +182,8 @@ document.getElementById("imageInput").addEventListener("change", (event) => {
         .then((data) => {
             if (data.url) {
                 // 이미지 업로드 성공 시 서버로 닉네임과 이미지 URL 전송
-                socket.emit('send_image_event', { url: data.url, nickname: nickname });
+                socket.emit('send_image_event', { url: data.url, nickname: nickname, room: roomNumber });
+                scrollToBottom();
             }
         });
     }
@@ -189,26 +191,28 @@ document.getElementById("imageInput").addEventListener("change", (event) => {
 
 
 socket.on('send_image_event', (data) => {
-    const newMessage = document.createElement("div");
-    const nicknameDiv = document.createElement("div");
-    const img = document.createElement("img");
+    if (data.room === roomNumber) { // 현재 방 번호와 일치하는지 확인
+        const newMessage = document.createElement("div");
+        const nicknameDiv = document.createElement("div");
+        const img = document.createElement("img");
 
-    // 닉네임 설정
-    nicknameDiv.textContent = `${data.nickname}`;
-    nicknameDiv.classList.add("nickname");
+        // 닉네임 설정
+        nicknameDiv.textContent = `${data.nickname}`;
+        nicknameDiv.classList.add("nickname");
 
-    // 이미지 설정
-    img.src = data.url;
-    img.alt = "Uploaded Image";
-    img.classList.add("uploaded-image");
+        // 이미지 설정
+        img.src = data.url;
+        img.alt = "Uploaded Image";
+        img.classList.add("uploaded-image");
 
-    // 본인의 이미지인지 확인하여 스타일 적용
-    if (data.nickname === nickname) {
-        newMessage.classList.add("myImage");
+        // 본인의 이미지인지 확인하여 스타일 적용
+        if (data.nickname === nickname) {
+            newMessage.classList.add("myImage");
+        }
+
+        newMessage.appendChild(nicknameDiv);
+        newMessage.appendChild(img);
+        document.getElementById("messages").appendChild(newMessage);
+        scrollToBottom();
     }
-
-    newMessage.appendChild(nicknameDiv);
-    newMessage.appendChild(img);
-    document.getElementById("messages").appendChild(newMessage);
-    scrollToBottom();
 });

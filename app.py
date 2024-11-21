@@ -8,7 +8,7 @@ import pymysql
 from scapy.all import sniff, IP, TCP, Ether
 import threading
 import os
-from werkzeug.utils import secure_filename
+
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 # Flask 및 환경 설정
 UPLOAD_FOLDER = 'uploads/'
@@ -155,8 +155,14 @@ def handle_connect():
     print('클라이언트가 서버에 연결되었습니다!')
 
 @socketio.on('send_image_event')
-def handle_send_image(data):
-    emit('send_image_event', data, broadcast=True)
+def handle_send_image_event(data):
+    room = data.get('room')  # 방 번호 가져오기
+    url = data.get('url')
+    nickname = data.get('nickname')
+    
+    # 특정 방으로 이미지 브로드캐스트
+    emit('send_image_event', {'url': url, 'nickname': nickname, 'room': room}, to=room)
+
 
 # 채팅방 참여
 @socketio.event
