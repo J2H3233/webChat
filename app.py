@@ -188,7 +188,7 @@ def capture_packets(message, room, nickname):
         log = []
 
         # 애플리케이션 계층 데이터
-        log.append(f"[응용층] {nickname}'s Message: {message}")
+        log.append(f"[응용층] {nickname}의 메세지: {message}")
 
     # 데이터 링크 계층 (Ether)
     if Ether in packet:
@@ -242,9 +242,9 @@ def capture_packets(message, room, nickname):
     # 전송 계층 (TCP)
     if TCP in packet:
         tcp_layer = {
-        'Source Port': packet[TCP].sport,
-        'Destination Port': packet[TCP].dport,
-        'Sequence Number': packet[TCP].seq,
+        '출발 포트': packet[TCP].sport,
+        '도착 포트': packet[TCP].dport,
+        '순서 번호': packet[TCP].seq,
 
         }
         log.append(f"[전송층] {tcp_layer}")
