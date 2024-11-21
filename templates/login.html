@@ -6,9 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style/body.css') }}" type="text/css">
-
-    </style>
-
 </head>
 
 <body>
@@ -17,7 +14,7 @@
             <h2>Login</h2><br>
 
             <div class="inputBox">
-                <input type="text" placeholder="username" name="username" value="">
+                <input type="text" placeholder="username" name="id" value="">
                 <label>아이디</label>
             </div>
             <div class="inputBox">
@@ -29,7 +26,6 @@
         
         <form class="box2" action="/signup/">
             <input type="submit" id="signup" value="회원가입">
-
         </form>
     </div>
 </body>
