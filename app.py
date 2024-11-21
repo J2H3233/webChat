@@ -100,40 +100,51 @@ def send_message_event(data):
     threading.Thread(target=capture_packets, args=(message, room, nickname)).start()
 
 def capture_packets(message, room, nickname):
-    packets = sniff(filter="tcp", count=1)  # TCP 패킷 하나만 캡처
+
+    packets = sniff(filter="tcp", count=1)  # TCP 패킷 하나 캡처
     for packet in packets:
         log = []
 
-        # 애플리케이션 계층
-        log.append(f"응용층 데이터: Message = {message}")
+        # 애플리케이션 계층 데이터
+        log.append(f"[Application Layer] {nickname}'s Message: {message}")
 
-        # 데이터 링크 계층 (MAC 주소)
+        # 데이터 링크 계층 (Ether)
         if Ether in packet:
-            data_link_layer = {
-                '출발지 물리 주소': packet[Ether].src,
-                '목적지 물리 주소': packet[Ether].dst
+            ether_layer = {
+                'Source MAC': packet[Ether].src,
+                'Destination MAC': packet[Ether].dst,
+                'Type': hex(packet[Ether].type)  # 패킷 유형 (IPv4, ARP 등)
             }
-            log.append(f"데이터 링크층: {data_link_layer}")
+            log.append(f"[Data Link Layer] {ether_layer}")
 
-        # 네트워크 계층 (IP 주소)
+        # 네트워크 계층 (IP)
         if IP in packet:
-            network_layer = {
-                '출발지 IP 주소': packet[IP].src,
-                '목적지 IP 주소': packet[IP].dst,
+            ip_layer = {
+                'Source IP': packet[IP].src,
+                'Destination IP': packet[IP].dst,
+                'TTL': packet[IP].ttl,  # Time-to-Live
+                'Protocol': packet[IP].proto  # 프로토콜 번호
             }
-            log.append(f"네트워크 층: {network_layer}")
+            log.append(f"[Network Layer] {ip_layer}")
 
-        # 전송 계층 (TCP 포트 및 체크섬)
+        # 전송 계층 (TCP)
         if TCP in packet:
-            transport_layer = {
-                '출발지 포트': packet[TCP].sport,
-                '목적지 포트': packet[TCP].dport,
-                '전송 순서': packet[TCP].seq,
-                '체크섬': packet[TCP].chksum
+            tcp_layer = {
+                'Source Port': packet[TCP].sport,
+                'Destination Port': packet[TCP].dport,
+                'Sequence Number': packet[TCP].seq,
+                'Acknowledgment Number': packet[TCP].ack,
+                'Flags': packet[TCP].flags,  # SYN, ACK 등 플래그
+                'Window Size': packet[TCP].window
             }
-            log.append(f"전송층: {transport_layer}")
+            log.append(f"[Transport Layer] {tcp_layer}")
 
-        # 각 계층별 로그를 클라이언트에 전송
+        # Raw 데이터 (원시 페이로드)
+        if packet.haslayer('Raw'):
+            raw_data = packet['Raw'].load
+            log.append(f"[Raw Layer] Payload: {raw_data}")
+
+        # 로그를 클라이언트에 전송
         for entry in log:
             socketio.emit('packet_log', entry, to=room)
 
