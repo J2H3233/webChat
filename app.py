@@ -1,5 +1,5 @@
-# import eventlet
-# eventlet.monkey_patch()
+import eventlet
+eventlet.monkey_patch()
 import re
 from flask import Flask, render_template, request, jsonify, send_from_directory, redirect, url_for, flash
 from flask_socketio import SocketIO, emit, join_room, leave_room
@@ -224,6 +224,13 @@ def capture_packets(message, room, nickname):
         for entry in log:
             socketio.emit('packet_log', entry, to=room)
 
+
+
+def safe_filename(filename):
+    # 파일 이름에서 허용되지 않는 문자를 제거 (알파벳, 숫자, 밑줄, 하이픈, 마침표만 허용)
+    safe_name = re.sub(r'[^a-zA-Z0-9_.-]', '_', filename)
+    return safe_name.strip("._")  # 앞뒤 불필요한 마침표, 밑줄 제거
+
 # 확장자 확인 함수
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
@@ -246,11 +253,6 @@ def upload_file():
 @app.route('/static/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
-def safe_filename(filename):
-    # 파일 이름에서 허용되지 않는 문자를 제거 (알파벳, 숫자, 밑줄, 하이픈, 마침표만 허용)
-    safe_name = re.sub(r'[^a-zA-Z0-9_.-]', '_', filename)
-    return safe_name.strip("._")  # 앞뒤 불필요한 마침표, 밑줄 제거
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host="0.0.0.0")
