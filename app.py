@@ -206,10 +206,11 @@ def capture_packets(message, room, nickname):
             packet_type = "LLDP"
         else:  # Unknown type
             packet_type = "Unknown"
-
+        src_mac = ":".join(packet[Ether].src.split(":")[:2]) + ":xx:xx"
+        dst_mac = ":".join(packet[Ether].dst.split(":")[:2]) + ":xx:xx"
     ether_layer = {
-        '출발지 MAC주소': packet[Ether].src,
-        '목적지 MAC주소': packet[Ether].dst,
+        '출발지 MAC주소': src_mac,
+        '목적지 MAC주소': dst_mac,
         '패킷 유형': f"{hex(packet[Ether].type)} ({packet_type})"
     }
     log.append(f"[데이터 링크층] {ether_layer}")
@@ -231,9 +232,12 @@ def capture_packets(message, room, nickname):
         else:  # Unknown protocol
             protocol = "Unknown"
 
+    src_ip = ".".join(packet[IP].src.split(".")[:2]) + ".x.x"
+    dst_ip = ".".join(packet[IP].dst.split(".")[:2]) + ".x.x"
+
     ip_layer = {
-        '출발지 IP': packet[IP].src,
-        '목적지 IP': packet[IP].dst,
+        '출발지 IP': src_ip,
+        '목적지 IP': dst_ip,
         '패킷 생존시간': packet[IP].ttl,  # Time-to-Live
         '프로토콜': f"{packet[IP].proto} ({protocol})"
     }
@@ -245,7 +249,6 @@ def capture_packets(message, room, nickname):
         '출발 포트': packet[TCP].sport,
         '도착 포트': packet[TCP].dport,
         '순서 번호': packet[TCP].seq,
-
         }
         log.append(f"[전송층] {tcp_layer}")
 
