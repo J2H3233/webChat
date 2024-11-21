@@ -192,21 +192,20 @@ def capture_packets(message, room, nickname):
 
     # 데이터 링크 계층 (Ether)
     if Ether in packet:
-        match packet[Ether].type:
-            case 0x0800:  # IPv4
-                packet_type = "IPv4"
-            case 0x0806:  # ARP
-                packet_type = "ARP"
-            case 0x0842:  # Wake-on-LAN
-                packet_type = "Wake-on-LAN"
-            case 0x86DD:  # IPv6
-                packet_type = "IPv6"
-            case 0x8808:  # Ethernet Flow Control
-                packet_type = "Ethernet Flow Control"
-            case 0x88CC:  # LLDP
-                packet_type = "LLDP"
-            case _:  # Unknown type
-                packet_type = "Unknown"
+        if packet[Ether].type == 0x0800:  # IPv4
+            packet_type = "IPv4"
+        elif packet[Ether].type == 0x0806:  # ARP
+            packet_type = "ARP"
+        elif packet[Ether].type == 0x0842:  # Wake-on-LAN
+            packet_type = "Wake-on-LAN"
+        elif packet[Ether].type == 0x86DD:  # IPv6
+            packet_type = "IPv6"
+        elif packet[Ether].type == 0x8808:  # Ethernet Flow Control
+            packet_type = "Ethernet Flow Control"
+        elif packet[Ether].type == 0x88CC:  # LLDP
+            packet_type = "LLDP"
+        else:  # Unknown type
+            packet_type = "Unknown"
 
     ether_layer = {
         '출발지 MAC주소': packet[Ether].src,
@@ -217,21 +216,20 @@ def capture_packets(message, room, nickname):
 
     # 네트워크 계층 (IP)
     if IP in packet:
-        match packet[IP].proto:
-            case 1:  # ICMP
-                protocol = "ICMP"
-            case 6:  # TCP
-                protocol = "TCP"
-            case 17:  # UDP
-                protocol = "UDP"
-            case 41:  # IPv6 Encapsulation
-                protocol = "IPv6 Encapsulation"
-            case 50:  # ESP
-                protocol = "ESP"
-            case 89:  # OSPF
-                protocol = "OSPF"
-            case _:  # Unknown protocol
-                protocol = "Unknown"
+        if packet[IP].proto == 1:  # ICMP
+            protocol = "ICMP"
+        elif packet[IP].proto == 6:  # TCP
+            protocol = "TCP"
+        elif packet[IP].proto == 17:  # UDP
+            protocol = "UDP"
+        elif packet[IP].proto == 41:  # IPv6 Encapsulation
+            protocol = "IPv6 Encapsulation"
+        elif packet[IP].proto == 50:  # ESP
+            protocol = "ESP"
+        elif packet[IP].proto == 89:  # OSPF
+            protocol = "OSPF"
+        else:  # Unknown protocol
+            protocol = "Unknown"
 
     ip_layer = {
         '출발지 IP': packet[IP].src,
