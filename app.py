@@ -188,43 +188,69 @@ def capture_packets(message, room, nickname):
         log = []
 
         # 애플리케이션 계층 데이터
-        log.append(f"[Application Layer] {nickname}'s Message: {message}")
+        log.append(f"[응용층] {nickname}'s Message: {message}")
 
-        # 데이터 링크 계층 (Ether)
-        if Ether in packet:
-            ether_layer = {
-                'Source MAC': packet[Ether].src,
-                'Destination MAC': packet[Ether].dst,
-                'Type': hex(packet[Ether].type)  # 패킷 유형 (IPv4, ARP 등)
-            }
-            log.append(f"[Data Link Layer] {ether_layer}")
+    # 데이터 링크 계층 (Ether)
+    if Ether in packet:
+        match packet[Ether].type:
+            case 0x0800:  # IPv4
+                packet_type = "IPv4"
+            case 0x0806:  # ARP
+                packet_type = "ARP"
+            case 0x0842:  # Wake-on-LAN
+                packet_type = "Wake-on-LAN"
+            case 0x86DD:  # IPv6
+                packet_type = "IPv6"
+            case 0x8808:  # Ethernet Flow Control
+                packet_type = "Ethernet Flow Control"
+            case 0x88CC:  # LLDP
+                packet_type = "LLDP"
+            case _:  # Unknown type
+                packet_type = "Unknown"
 
-        # 네트워크 계층 (IP)
-        if IP in packet:
-            ip_layer = {
-                'Source IP': packet[IP].src,
-                'Destination IP': packet[IP].dst,
-                'TTL': packet[IP].ttl,  # Time-to-Live
-                'Protocol': packet[IP].proto  # 프로토콜 번호
-            }
-            log.append(f"[Network Layer] {ip_layer}")
+    ether_layer = {
+        '출발지 MAC주소': packet[Ether].src,
+        '목적지 MAC주소': packet[Ether].dst,
+        '패킷 유형': f"{hex(packet[Ether].type)} ({packet_type})"
+    }
+    log.append(f"[데이터 링크층] {ether_layer}")
 
-        # 전송 계층 (TCP)
-        if TCP in packet:
-            tcp_layer = {
-                'Source Port': packet[TCP].sport,
-                'Destination Port': packet[TCP].dport,
-                'Sequence Number': packet[TCP].seq,
-                # 'Acknowledgment Number': packet[TCP].ack,
-                # 'Flags': packet[TCP].flags,  # SYN, ACK 등 플래그
-                # 'Window Size': packet[TCP].window
-            }
-            log.append(f"[Transport Layer] {tcp_layer}")
+    # 네트워크 계층 (IP)
+    if IP in packet:
+        match packet[IP].proto:
+            case 1:  # ICMP
+                protocol = "ICMP"
+            case 6:  # TCP
+                protocol = "TCP"
+            case 17:  # UDP
+                protocol = "UDP"
+            case 41:  # IPv6 Encapsulation
+                protocol = "IPv6 Encapsulation"
+            case 50:  # ESP
+                protocol = "ESP"
+            case 89:  # OSPF
+                protocol = "OSPF"
+            case _:  # Unknown protocol
+                protocol = "Unknown"
 
-        # # Raw 데이터 (원시 페이로드)
-        # if packet.haslayer('Raw'):
-        #     raw_data = packet['Raw'].load
-        #     log.append(f"[Raw Layer] Payload: {raw_data}")
+    ip_layer = {
+        '출발지 IP': packet[IP].src,
+        '목적지 IP': packet[IP].dst,
+        '패킷 생존시간': packet[IP].ttl,  # Time-to-Live
+        '프로토콜': f"{packet[IP].proto} ({protocol})"
+    }
+    log.append(f"[네트워크층] {ip_layer}")
+
+    # 전송 계층 (TCP)
+    if TCP in packet:
+        tcp_layer = {
+        'Source Port': packet[TCP].sport,
+        'Destination Port': packet[TCP].dport,
+        'Sequence Number': packet[TCP].seq,
+
+        }
+        log.append(f"[전송층] {tcp_layer}")
+
 
         # 로그를 클라이언트에 전송
         for entry in log:
