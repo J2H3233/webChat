@@ -206,8 +206,8 @@ def capture_packets(message, room, nickname):
             packet_type = "LLDP"
         else:  # Unknown type
             packet_type = "Unknown"
-        src_mac = ":".join(packet[Ether].src.split(":")[:2]) + ":xx:xx"
-        dst_mac = ":".join(packet[Ether].dst.split(":")[:2]) + ":xx:xx"
+        src_mac = ":".join(packet[Ether].src.split(":")[:3]) + ":xx:xx"
+        dst_mac = ":".join(packet[Ether].dst.split(":")[:3]) + ":xx:xx"
     ether_layer = {
         '출발지 MAC주소': src_mac,
         '목적지 MAC주소': dst_mac,
