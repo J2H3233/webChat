@@ -190,87 +190,71 @@ def capture_packets(message, room, nickname):
         # 애플리케이션 계층 데이터
         log.append(f"[응용층] {nickname}의 메세지: {message}")
 
-        # 데이터 링크 계층 (Ether)
-        if Ether in packet:
-            if packet[Ether].type == 0x0800:  # IPv4
-                packet_type = "IPv4"
-            elif packet[Ether].type == 0x0806:  # ARP
-                packet_type = "ARP"
-            elif packet[Ether].type == 0x0842:  # Wake-on-LAN
-                packet_type = "Wake-on-LAN"
-            elif packet[Ether].type == 0x86DD:  # IPv6
-                packet_type = "IPv6"
-            elif packet[Ether].type == 0x8808:  # Ethernet Flow Control
-                packet_type = "Ethernet Flow Control"
-            elif packet[Ether].type == 0x88CC:  # LLDP
-                packet_type = "LLDP"
-            else:  # Unknown type
-                packet_type = "Unknown"
-            src_mac = ":".join(packet[Ether].src.split(":")[:3]) + ":xx:xx"
-            dst_mac = ":".join(packet[Ether].dst.split(":")[:3]) + ":xx:xx"
-            ether_layer = {
-                '출발지 MAC주소': src_mac,
-                '목적지 MAC주소': dst_mac,
-                '패킷 유형': f"{hex(packet[Ether].type)} ({packet_type})",
-                '체크섬': hex(packet[Ether].chksum) if hasattr(packet[Ether], 'chksum') else "N/A"
-            }
-            log.append(f"[데이터 링크층] {ether_layer}")
+    # 데이터 링크 계층 (Ether)
+    if Ether in packet:
+        if packet[Ether].type == 0x0800:  # IPv4
+            packet_type = "IPv4"
+        elif packet[Ether].type == 0x0806:  # ARP
+            packet_type = "ARP"
+        elif packet[Ether].type == 0x0842:  # Wake-on-LAN
+            packet_type = "Wake-on-LAN"
+        elif packet[Ether].type == 0x86DD:  # IPv6
+            packet_type = "IPv6"
+        elif packet[Ether].type == 0x8808:  # Ethernet Flow Control
+            packet_type = "Ethernet Flow Control"
+        elif packet[Ether].type == 0x88CC:  # LLDP
+            packet_type = "LLDP"
+        else:  # Unknown type
+            packet_type = "Unknown"
+        src_mac = ":".join(packet[Ether].src.split(":")[:3]) + ":xx:xx"
+        dst_mac = ":".join(packet[Ether].dst.split(":")[:3]) + ":xx:xx"
+    ether_layer = {
+        '출발지 MAC주소': src_mac,
+        '목적지 MAC주소': dst_mac,
+        '패킷 유형': f"{hex(packet[Ether].type)} ({packet_type})",
+        '체크섬': hex(packet[Ether].chksum)  # IP 체크섬
+    }
+    log.append(f"[데이터 링크층] {ether_layer}")
 
-        # 네트워크 계층 (IP)
-        if IP in packet:
-            if packet[IP].proto == 1:  # ICMP
-                protocol = "ICMP"
-            elif packet[IP].proto == 6:  # TCP
-                protocol = "TCP"
-            elif packet[IP].proto == 17:  # UDP
-                protocol = "UDP"
-            elif packet[IP].proto == 41:  # IPv6 Encapsulation
-                protocol = "IPv6 Encapsulation"
-            elif packet[IP].proto == 50:  # ESP
-                protocol = "ESP"
-            elif packet[IP].proto == 89:  # OSPF
-                protocol = "OSPF"
-            else:  # Unknown protocol
-                protocol = "Unknown"
+    # 네트워크 계층 (IP)
+    if IP in packet:
+        if packet[IP].proto == 1:  # ICMP
+            protocol = "ICMP"
+        elif packet[IP].proto == 6:  # TCP
+            protocol = "TCP"
+        elif packet[IP].proto == 17:  # UDP
+            protocol = "UDP"
+        elif packet[IP].proto == 41:  # IPv6 Encapsulation
+            protocol = "IPv6 Encapsulation"
+        elif packet[IP].proto == 50:  # ESP
+            protocol = "ESP"
+        elif packet[IP].proto == 89:  # OSPF
+            protocol = "OSPF"
+        else:  # Unknown protocol
+            protocol = "Unknown"
 
-            src_ip = ".".join(packet[IP].src.split(".")[:2]) + ".x.x"
-            dst_ip = ".".join(packet[IP].dst.split(".")[:2]) + ".x.x"
+    src_ip = ".".join(packet[IP].src.split(".")[:2]) + ".x.x"
+    dst_ip = ".".join(packet[IP].dst.split(".")[:2]) + ".x.x"
 
-            ip_layer = {
-                '출발지 IP': src_ip,
-                '목적지 IP': dst_ip,
-                '패킷 생존시간': packet[IP].ttl,  # Time-to-Live
-                '프로토콜': f"{packet[IP].proto} ({protocol})",
-                '헤더 길이': packet[IP].ihl * 4,  # IP Header Length (bytes)
-                '전체 길이': packet[IP].len,  # Total Length (bytes)
-                'ID': packet[IP].id,
-                '체크섬': hex(packet[IP].chksum)  # IP 체크섬
-            }
-            log.append(f"[네트워크층] {ip_layer}")
+    ip_layer = {
+        '출발지 IP': src_ip,
+        '목적지 IP': dst_ip,
+        '패킷 생존시간': packet[IP].ttl,  # Time-to-Live
+        '프로토콜': f"{packet[IP].proto} ({protocol})",
+        '체크섬': hex(packet[IP].chksum)  # IP 체크섬
+    }
+    log.append(f"[네트워크층] {ip_layer}")
 
-        # 전송 계층 (TCP)
-        if TCP in packet:
-            tcp_layer = {
-                '출발 포트': packet[TCP].sport,
-                '도착 포트': packet[TCP].dport,
-                '순서 번호': packet[TCP].seq,
-                '확인 응답 번호': packet[TCP].ack,
-                '플래그': {
-                    'URG': packet[TCP].flags & 0x20 != 0,
-                    'ACK': packet[TCP].flags & 0x10 != 0,
-                    'PSH': packet[TCP].flags & 0x08 != 0,
-                    'RST': packet[TCP].flags & 0x04 != 0,
-                    'SYN': packet[TCP].flags & 0x02 != 0,
-                    'FIN': packet[TCP].flags & 0x01 != 0
-                },
-                '윈도우 크기': packet[TCP].window,
-                '체크섬': hex(packet[TCP].chksum)  # IP 체크섬
-            }
-            log.append(f"[전송층] {tcp_layer}")
+    # 전송 계층 (TCP)
+    if TCP in packet:
+        tcp_layer = {
+        '출발 포트': packet[TCP].sport,
+        '도착 포트': packet[TCP].dport,
+        '순서 번호': packet[TCP].seq,
+        '체크섬': hex(packet[TCP].chksum)  # IP 체크섬
+        }
+        log.append(f"[전송층] {tcp_layer}")
 
-        # 캡처하지 못한 계층에 대한 예외 처리
-        else:
-            log.append("[전송층] TCP 계층 정보 없음")
 
         # 로그를 클라이언트에 전송
         for entry in log:
